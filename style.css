@@ -37,12 +37,146 @@ h1, h2, h3 {
     top: 0;
     z-index: 1000;
 }
-.nav-container { max-width: var(--container-width); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-.nav-logo { font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--headline-color); text-decoration: none; letter-spacing: 2px; }
-.nav-links a { color: var(--text-color); text-decoration: none; margin-left: 1.5rem; font-weight: 300; transition: color 0.3s ease; }
-.nav-links a:hover { color: var(--primary-color); }
-.nav-button { background-color: var(--primary-color); color: var(--headline-color); padding: 0.5rem 1rem; border-radius: 5px; font-weight: 700; }
-.nav-button:hover { background-color: #0099e6; color: var(--headline-color); }
+
+.nav-container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-family: 'Teko', sans-serif;
+    font-size: 2rem;
+    color: var(--headline-color);
+    text-decoration: none;
+    letter-spacing: 2px;
+    z-index: 10; /* Ensure logo stays on top */
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-button {
+    background-color: var(--primary-color);
+    color: var(--headline-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 700;
+}
+
+.nav-button:hover {
+    background-color: #0099e6;
+    color: var(--headline-color) !important; /* Overrides hover color */
+}
+
+/* Hide hamburger menu by default */
+.nav-toggle {
+    display: none;
+}
+.nav-toggle-label {
+    display: none; /* Hidden on desktop */
+}
+
+/* --- MOBILE STYLES for NAV --- */
+@media (max-width: 768px) {
+    /* Show the hamburger icon */
+    .nav-toggle-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    /* Style the three lines of the hamburger */
+    .nav-toggle-label span,
+    .nav-toggle-label span::before,
+    .nav-toggle-label span::after {
+        display: block;
+        background: white;
+        height: 2px;
+        width: 25px;
+        border-radius: 2px;
+        position: relative;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .nav-toggle-label span::before,
+    .nav-toggle-label span::after {
+        content: '';
+        position: absolute;
+    }
+
+    .nav-toggle-label span::before {
+        top: -8px;
+    }
+
+    .nav-toggle-label span::after {
+        top: 8px;
+    }
+    
+    /* Hide the original nav links container */
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%; /* Position it right below the navbar */
+        left: 0;
+        width: 100%;
+        background-color: #0d1117; /* Solid background */
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem 0;
+    }
+
+    .nav-links a {
+        padding: 1rem 2rem;
+        margin: 0;
+        text-align: center;
+    }
+
+    .nav-links .nav-button {
+        margin: 1rem 2rem 0 2rem;
+        padding: 1rem;
+    }
+    
+    /* THE MAGIC: Show the menu when the checkbox is checked */
+    .nav-toggle:checked ~ .nav-links {
+        display: flex;
+    }
+
+    /* Animate hamburger to an 'X' when checked */
+    .nav-toggle:checked ~ .nav-toggle-label span {
+        background: transparent; /* Middle line disappears */
+    }
+
+    .nav-toggle:checked ~ .nav-toggle-label span::before {
+        transform: rotate(45deg);
+        top: 0;
+    }
+
+    .nav-toggle:checked ~ .nav-toggle-label span::after {
+        transform: rotate(-45deg);
+        top: 0;
+    }
+}
 
 /* ======================= */
 /*        HERO SECTION     */
