@@ -188,3 +188,93 @@ h1, h2, h3 {
     line-height: 1.6;
     font-weight: 300;
 }
+
+
+/* ======================= */
+/*       ROADMAP SECTION   */
+/* ======================= */
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* The central vertical line */
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.15);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1px;
+}
+
+.timeline-item {
+    padding: 1rem 3rem;
+    position: relative;
+    width: 50%;
+}
+
+/* The circle on the timeline */
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--background-color);
+    border: 3px solid var(--primary-color);
+    top: 28px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Position the items on the left and right */
+.timeline-item:nth-child(odd) {
+    left: 0;
+    padding-left: 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+    padding-right: 0;
+}
+
+/* Position the circles for left and right items */
+.timeline-item:nth-child(odd)::after {
+    right: -8px; /* Half the width of the circle */
+}
+
+.timeline-item:nth-child(even)::after {
+    left: -8px; /* Half the width of the circle */
+}
+
+.timeline-content {
+    padding: 1.5rem;
+    background-color: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Align text for even items */
+.timeline-item:nth-child(even) .timeline-content {
+    text-align: left;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    text-align: right;
+}
+
+.timeline-content h3 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.timeline-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 300;
+}
