@@ -219,20 +219,40 @@ h1, h2, h3 {
 /*     MOBILE RESPONSIVENESS     */
 /* ============================= */
 
-/* This targets tablets and mobile phones (screens smaller than 992px) */
-@media (max-width: 992px) {
-    .hero-headline {
-        font-size: 3.5rem; /* Make the main title smaller */
+/* This targets all touch devices for a major performance fix */
+@media (hover: none) {
+    /* The #1 cause of mobile glitching. Disable fixed backgrounds. */
+    .hero, .section-wrapper {
+        background-attachment: scroll !important; 
     }
 }
 
 
-/* This targets mobile phones (screens smaller than 768px) */
+/* This targets screens smaller than 768px (most phones) */
 @media (max-width: 768px) {
+
     /* --- NAVIGATION --- */
     .nav-container {
         flex-direction: column; /* Stack logo and links */
-        gap: 0.5rem;
+        gap: 1.5rem; /* Add more space when stacked */
+    }
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    /* --- FONT SIZES --- */
+    .hero-headline { font-size: 3rem; }
+    .hero-subheadline { font-size: 1.1rem; }
+    .section-title { font-size: 2.5rem; }
+
+
+    /* --- BUTTONS --- */
+    .hero-button {
+        white-space: nowrap; /* Fixes the broken text wrapping */
+        padding: 0.8rem 1.5rem; /* Adjust padding for mobile */
+        font-size: 1rem;
     }
 
     /* --- LAYOUTS --- */
@@ -242,39 +262,40 @@ h1, h2, h3 {
         grid-template-columns: 1fr; /* Stack all grids into a single column */
     }
 
-    /* --- HERO --- */
-    .hero-headline {
-        font-size: 2.8rem;
-    }
-    .hero-subheadline {
-        font-size: 1.1rem;
+    /* --- ROADMAP FIX --- */
+    .timeline {
+        padding-left: 25px; /* Create space on the left for the line */
+        margin-left: 0;
     }
     
-    /* --- ROADMAP --- */
-    /* Move the timeline line to the far left */
+    /* The vertical line */
     .timeline::after {
-        left: 15px; 
+        left: 0; /* Pin the line to the absolute left */
     }
     
-    /* Make all items full-width and aligned to the left */
+    /* All timeline items */
     .timeline-item,
     .timeline-item:nth-child(even) {
-        left: 0;
         width: 100%;
-        padding-left: 45px; /* Add space for the moved line */
-        padding-right: 15px;
+        left: 0; /* Remove any horizontal positioning */
+        padding-left: 25px; /* Space between line and content */
+        padding-right: 0;
     }
 
-    /* Force all timeline text to be left-aligned */
+    /* All timeline text must be left-aligned */
     .timeline-item:nth-child(odd) .timeline-content,
     .timeline-item:nth-child(even) .timeline-content {
         text-align: left;
     }
 
-    /* Move the timeline dots to the far left */
+    /* The dots on the line */
     .timeline-item::after,
     .timeline-item:nth-child(odd)::after,
     .timeline-item:nth-child(even)::after {
-        left: 8px;
+        left: -8px; /* Position dots over the line correctly */
+    }
+
+    .advisor-grid {
+        max-width: 350px; /* Constrain the advisor cards on mobile */
     }
 }
