@@ -1,1 +1,134 @@
+/* ======================= */
+/*     GLOBAL STYLES       */
+/* ======================= */
+:root {
+    --primary-color: #00aaff; /* A vibrant, techy blue */
+    --background-color: #0d1117; /* A dark, space-like charcoal */
+    --text-color: #c9d1d9; /* Off-white for readability */
+    --headline-color: #ffffff;
+    --container-width: 1200px;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+h1, h2, h3 {
+    font-family: 'Teko', sans-serif;
+    color: var(--headline-color);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* ======================= */
+/*      NAVIGATION BAR     */
+/* ======================= */
+.navbar {
+    background-color: rgba(13, 17, 23, 0.8); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-family: 'Teko', sans-serif;
+    font-size: 2rem;
+    color: var(--headline-color);
+    text-decoration: none;
+    letter-spacing: 2px;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-button {
+    background-color: var(--primary-color);
+    color: var(--headline-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 700;
+}
+
+.nav-button:hover {
+    background-color: #0099e6;
+    color: var(--headline-color);
+}
+
+
+/* ======================= */
+/*        HERO SECTION     */
+/* ======================= */
+.hero {
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 2rem;
+    /* We will add a background image or video here later */
+    background: linear-gradient(rgba(13, 17, 23, 0.8), rgba(13, 17, 23, 1)), url('YOUR_DRONE_IMAGE_URL_HERE') no-repeat center center/cover;
+}
+
+.hero-content {
+    max-width: 900px;
+}
+
+.hero-headline {
+    font-size: 5rem;
+    line-height: 1;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.hero-subheadline {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+}
+
+.hero-button {
+    background-color: var(--primary-color);
+    color: var(--headline-color);
+    padding: 1rem 2.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: transform 0.3s ease;
+}
+
+.hero-button:hover {
+    transform: translateY(-3px);
+}
