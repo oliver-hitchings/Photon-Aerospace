@@ -11,13 +11,17 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html {
+    scroll-behavior: smooth; /* Enables smooth scrolling for anchor links */
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     font-family: 'Teko', sans-serif;
     color: var(--headline-color);
     font-weight: 600;
@@ -52,7 +56,7 @@ h1, h2, h3 {
     color: var(--headline-color);
     text-decoration: none;
     letter-spacing: 2px;
-    z-index: 10; /* Ensure logo stays on top */
+    z-index: 10;
 }
 
 .nav-links {
@@ -82,100 +86,12 @@ h1, h2, h3 {
 
 .nav-button:hover {
     background-color: #0099e6;
-    color: var(--headline-color) !important; /* Overrides hover color */
+    color: var(--headline-color) !important;
 }
 
-/* Hide hamburger menu by default */
-.nav-toggle {
-    display: none;
-}
+.nav-toggle,
 .nav-toggle-label {
-    display: none; /* Hidden on desktop */
-}
-
-/* --- MOBILE STYLES for NAV --- */
-@media (max-width: 768px) {
-    /* Show the hamburger icon */
-    .nav-toggle-label {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        z-index: 10;
-    }
-
-    /* Style the three lines of the hamburger */
-    .nav-toggle-label span,
-    .nav-toggle-label span::before,
-    .nav-toggle-label span::after {
-        display: block;
-        background: white;
-        height: 2px;
-        width: 25px;
-        border-radius: 2px;
-        position: relative;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .nav-toggle-label span::before,
-    .nav-toggle-label span::after {
-        content: '';
-        position: absolute;
-    }
-
-    .nav-toggle-label span::before {
-        top: -8px;
-    }
-
-    .nav-toggle-label span::after {
-        top: 8px;
-    }
-    
-    /* Hide the original nav links container */
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 100%; /* Position it right below the navbar */
-        left: 0;
-        width: 100%;
-        background-color: #0d1117; /* Solid background */
-        flex-direction: column;
-        align-items: stretch;
-        padding: 1rem 0;
-    }
-
-    .nav-links a {
-        padding: 1rem 2rem;
-        margin: 0;
-        text-align: center;
-    }
-
-    .nav-links .nav-button {
-        margin: 1rem 2rem 0 2rem;
-        padding: 1rem;
-    }
-    
-    /* THE MAGIC: Show the menu when the checkbox is checked */
-    .nav-toggle:checked ~ .nav-links {
-        display: flex;
-    }
-
-    /* Animate hamburger to an 'X' when checked */
-    .nav-toggle:checked ~ .nav-toggle-label span {
-        background: transparent; /* Middle line disappears */
-    }
-
-    .nav-toggle:checked ~ .nav-toggle-label span::before {
-        transform: rotate(45deg);
-        top: 0;
-    }
-
-    .nav-toggle:checked ~ .nav-toggle-label span::after {
-        transform: rotate(-45deg);
-        top: 0;
-    }
+    display: none;
 }
 
 /* ======================= */
@@ -188,30 +104,31 @@ h1, h2, h3 {
     justify-content: center;
     text-align: center;
     padding: 0 2rem;
+    /* TODO: Replace with your actual background image */
     background: linear-gradient(rgba(13, 17, 23, 0.8), rgba(13, 17, 23, 1)), url('YOUR_DRONE_IMAGE_HERE.jpg') no-repeat center center/cover;
-    background-attachment: fixed; /* This makes the background stay put while scrolling */
+    background-attachment: fixed;
 }
+
 .hero-content { max-width: 900px; }
 .hero-headline { font-size: 5rem; line-height: 1; letter-spacing: 3px; margin-bottom: 1rem; }
 .hero-subheadline { font-size: 1.25rem; font-weight: 300; line-height: 1.6; max-width: 700px; margin: 0 auto 2rem auto; }
-.hero-button { background-color: var(--primary-color); color: var(--headline-color); padding: 1rem 2.5rem; border-radius: 5px; text-decoration: none; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; transition: transform 0.3s ease; }
-.hero-button:hover { transform: translateY(-3px); }
+.hero-button { background-color: var(--primary-color); color: var(--headline-color); padding: 1rem 2.5rem; border-radius: 5px; text-decoration: none; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; transition: transform 0.3s ease, background-color 0.3s ease; }
+.hero-button:hover { transform: translateY(-3px); background-color: #0099e6;}
 
 /* ============================= */
-/* NEW SECTION WRAPPER & STYLES */
+/*  SECTION WRAPPER & STYLES     */
 /* ============================= */
 .section-wrapper {
-    position: relative; /* Needed for the overlay */
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Make each section take up the full screen height */
+    min-height: 100vh;
     background-size: cover;
     background-position: center center;
-    background-attachment: fixed; /* THE KEY FOR THE PARALLAX SCROLLING EFFECT */
+    background-attachment: fixed;
 }
 
-/* Dark overlay to ensure text is always readable */
 .section-wrapper::before {
     content: '';
     position: absolute;
@@ -219,29 +136,26 @@ h1, h2, h3 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(13, 17, 23, 0.85); /* Dark overlay */
+    background-color: rgba(13, 17, 23, 0.85);
     z-index: 1;
 }
 
-/* Place the content on top of the overlay */
 .section-container {
     max-width: var(--container-width);
     margin: 0 auto;
     padding: 6rem 2rem;
     text-align: center;
-    position: relative; /* Makes sure this is on top of the ::before overlay */
+    position: relative;
     z-index: 2;
 }
 
 .section-title { font-size: 3rem; margin-bottom: 3rem; letter-spacing: 2px; }
 
-/* Placeholder backgrounds for each section */
-/* ACTION: Replace these with your real images! */
+/* TODO: Replace these placeholder backgrounds */
 .technology-bg { background-image: url('YOUR_TECHNOLOGY_IMAGE.jpg'); }
 .roadmap-bg { background-image: url('YOUR_ROADMAP_IMAGE.jpg'); }
 .team-bg { background-image: url('YOUR_TEAM_OR_OFFICE_IMAGE.jpg'); }
-.contact-bg { background: var(--background-color); } /* Solid color for the final contact section */
-
+.contact-bg { background: var(--background-color); }
 
 /* ======================= */
 /*     TECHNOLOGY SECTION  */
@@ -273,67 +187,17 @@ h1, h2, h3 {
 /* ======================= */
 /*         TEAM SECTION    */
 /* ======================= */
-/* ======================= */
-/*         TEAM SECTION    */
-/* ======================= */
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3rem;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; max-width: 900px; margin: 0 auto; }
 .team-member { text-align: center; }
-
-.team-photo-placeholder {
-    width: 150px;
-    height: 150px;
-    background-color: #161b22;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    margin: 0 auto 1.5rem auto;
-}
-
+.team-photo-placeholder { width: 150px; height: 150px; background-color: #161b22; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 50%; margin: 0 auto 1.5rem auto; }
 .team-name { font-size: 2rem; color: var(--headline-color); }
 .team-role { color: var(--primary-color); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
 .team-bio { font-weight: 300; }
-
-.advisory-title {
-    font-size: 2rem;
-    margin-top: 5rem; /* Adds space between founders and advisors */
-    margin-bottom: 2rem;
-    color: var(--headline-color);
-    text-align: center;
-}
-
-.advisor-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.advisor-card {
-    background-color: rgba(22, 27, 34, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.advisor-name {
-    font-size: 1.5rem;
-    color: var(--headline-color);
-}
-
-.advisor-expertise {
-    color: var(--primary-color);
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    text-transform: none; /* Advisors don't need uppercase */
-}
+.advisory-title { font-size: 2rem; margin-top: 5rem; margin-bottom: 2rem; color: var(--headline-color); text-align: center; }
+.advisor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+.advisor-card { background-color: rgba(22, 27, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1.5rem; text-align: center; }
+.advisor-name { font-size: 1.5rem; color: var(--headline-color); }
+.advisor-expertise { color: var(--primary-color); font-family: 'Roboto', sans-serif; font-weight: 400; text-transform: none; }
 
 /* ======================= */
 /*      CONTACT SECTION    */
@@ -347,89 +211,38 @@ h1, h2, h3 {
 .footer { text-align: center; padding: 2rem; background-color: #0d1117; }
 .footer p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
 
-
-
 /* ============================= */
 /*     MOBILE RESPONSIVENESS     */
 /* ============================= */
-
-/* This targets all touch devices for a major performance fix */
-@media (hover: none) {
-    /* The #1 cause of mobile glitching. Disable fixed backgrounds. */
-    .hero, .section-wrapper {
-        background-attachment: scroll !important; 
-    }
+@media (max-width: 992px) {
+    .hero-headline { font-size: 3.5rem; }
 }
 
-
-/* This targets screens smaller than 768px (most phones) */
 @media (max-width: 768px) {
-
-    /* --- NAVIGATION --- */
-    .nav-container {
-        flex-direction: column; /* Stack logo and links */
-        gap: 1.5rem; /* Add more space when stacked */
-    }
-    .nav-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    /* --- FONT SIZES --- */
-    .hero-headline { font-size: 3rem; }
-    .hero-subheadline { font-size: 1.1rem; }
-    .section-title { font-size: 2.5rem; }
-
-
-    /* --- BUTTONS --- */
-    .hero-button {
-        white-space: nowrap; /* Fixes the broken text wrapping */
-        padding: 0.8rem 1.5rem; /* Adjust padding for mobile */
-        font-size: 1rem;
-    }
+    /* --- NAV HAMBURGER MENU --- */
+    .nav-toggle-label { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; cursor: pointer; z-index: 10; }
+    .nav-toggle-label span, .nav-toggle-label span::before, .nav-toggle-label span::after { display: block; background: white; height: 2px; width: 25px; border-radius: 2px; position: relative; transition: all 0.3s ease-in-out; }
+    .nav-toggle-label span::before, .nav-toggle-label span::after { content: ''; position: absolute; }
+    .nav-toggle-label span::before { top: -8px; }
+    .nav-toggle-label span::after { top: 8px; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: #0d1117; flex-direction: column; align-items: stretch; padding: 1rem 0; }
+    .nav-links a { padding: 1rem 2rem; margin: 0; text-align: center; }
+    .nav-links .nav-button { margin: 1rem 2rem 0 2rem; padding: 1rem; }
+    .nav-toggle:checked ~ .nav-links { display: flex; }
+    .nav-toggle:checked ~ .nav-toggle-label span { background: transparent; }
+    .nav-toggle:checked ~ .nav-toggle-label span::before { transform: rotate(45deg); top: 0; }
+    .nav-toggle:checked ~ .nav-toggle-label span::after { transform: rotate(-45deg); top: 0; }
 
     /* --- LAYOUTS --- */
-    .features-grid,
-    .team-grid,
-    .advisor-grid {
-        grid-template-columns: 1fr; /* Stack all grids into a single column */
-    }
-
-    /* --- ROADMAP FIX --- */
-    .timeline {
-        padding-left: 25px; /* Create space on the left for the line */
-        margin-left: 0;
-    }
+    .features-grid, .team-grid, .advisor-grid { grid-template-columns: 1fr; }
     
-    /* The vertical line */
-    .timeline::after {
-        left: 0; /* Pin the line to the absolute left */
-    }
+    /* --- HERO --- */
+    .hero-headline { font-size: 2.8rem; }
+    .hero-subheadline { font-size: 1.1rem; }
     
-    /* All timeline items */
-    .timeline-item,
-    .timeline-item:nth-child(even) {
-        width: 100%;
-        left: 0; /* Remove any horizontal positioning */
-        padding-left: 25px; /* Space between line and content */
-        padding-right: 0;
-    }
-
-    /* All timeline text must be left-aligned */
-    .timeline-item:nth-child(odd) .timeline-content,
-    .timeline-item:nth-child(even) .timeline-content {
-        text-align: left;
-    }
-
-    /* The dots on the line */
-    .timeline-item::after,
-    .timeline-item:nth-child(odd)::after,
-    .timeline-item:nth-child(even)::after {
-        left: -8px; /* Position dots over the line correctly */
-    }
-
-    .advisor-grid {
-        max-width: 350px; /* Constrain the advisor cards on mobile */
-    }
+    /* --- ROADMAP --- */
+    .timeline::after { left: 15px; }
+    .timeline-item, .timeline-item:nth-child(even) { left: 0; width: 100%; padding-left: 45px; padding-right: 15px; }
+    .timeline-item:nth-child(odd) .timeline-content, .timeline-item:nth-child(even) .timeline-content { text-align: left; }
+    .timeline-item::after, .timeline-item:nth-child(odd)::after, .timeline-item:nth-child(even)::after { left: 8px; }
 }
