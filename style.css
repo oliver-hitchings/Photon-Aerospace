@@ -132,3 +132,59 @@ h1, h2, h3 {
 .hero-button:hover {
     transform: translateY(-3px);
 }
+
+
+/* ======================= */
+/*    SHARED SECTION STYLES  */
+/* ======================= */
+.section-container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 3rem;
+    margin-bottom: 3rem;
+    letter-spacing: 2px;
+}
+
+/* ======================= */
+/*     TECHNOLOGY SECTION  */
+/* ======================= */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Creates a 3-column grid */
+    gap: 2rem; /* Space between the cards */
+    text-align: left;
+}
+
+.feature-card {
+    background-color: #161b22; /* A slightly lighter shade of the background */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.feature-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 300;
+}
