@@ -212,3 +212,69 @@ h1, h2, h3 {
 /* ======================= */
 .footer { text-align: center; padding: 2rem; background-color: #0d1117; }
 .footer p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
+
+
+
+/* ============================= */
+/*     MOBILE RESPONSIVENESS     */
+/* ============================= */
+
+/* This targets tablets and mobile phones (screens smaller than 992px) */
+@media (max-width: 992px) {
+    .hero-headline {
+        font-size: 3.5rem; /* Make the main title smaller */
+    }
+}
+
+
+/* This targets mobile phones (screens smaller than 768px) */
+@media (max-width: 768px) {
+    /* --- NAVIGATION --- */
+    .nav-container {
+        flex-direction: column; /* Stack logo and links */
+        gap: 0.5rem;
+    }
+
+    /* --- LAYOUTS --- */
+    .features-grid,
+    .team-grid,
+    .advisor-grid {
+        grid-template-columns: 1fr; /* Stack all grids into a single column */
+    }
+
+    /* --- HERO --- */
+    .hero-headline {
+        font-size: 2.8rem;
+    }
+    .hero-subheadline {
+        font-size: 1.1rem;
+    }
+    
+    /* --- ROADMAP --- */
+    /* Move the timeline line to the far left */
+    .timeline::after {
+        left: 15px; 
+    }
+    
+    /* Make all items full-width and aligned to the left */
+    .timeline-item,
+    .timeline-item:nth-child(even) {
+        left: 0;
+        width: 100%;
+        padding-left: 45px; /* Add space for the moved line */
+        padding-right: 15px;
+    }
+
+    /* Force all timeline text to be left-aligned */
+    .timeline-item:nth-child(odd) .timeline-content,
+    .timeline-item:nth-child(even) .timeline-content {
+        text-align: left;
+    }
+
+    /* Move the timeline dots to the far left */
+    .timeline-item::after,
+    .timeline-item:nth-child(odd)::after,
+    .timeline-item:nth-child(even)::after {
+        left: 8px;
+    }
+}
