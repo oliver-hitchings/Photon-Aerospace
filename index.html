@@ -8,107 +8,131 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- CSS for the Password Overlay -->
+    <style>
+        #password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0d1117; /* Matches site background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .password-box {
+            background-color: #161b22;
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            width: 320px;
+        }
+        .password-box h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .password-input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            background-color: #0d1117;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+        .password-button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #00aaff;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .password-button:hover {
+            background-color: #0099e6;
+        }
+        #main-content {
+            visibility: hidden; /* Hide the main site content initially */
+        }
+    </style>
 </head>
 <body>
 
     <!-- ======================= -->
-    <!--      NAVIGATION BAR     -->
+    <!--  PASSWORD OVERLAY       -->
     <!-- ======================= -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="nav-logo">PHOTON AEROSPACE</a>
-            <input type="checkbox" id="nav-toggle" class="nav-toggle">
-            <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
-            <div class="nav-links">
-                <a href="#technology">Technology</a>
-                <a href="#roadmap">Roadmap</a>
-                <a href="#team">Team</a>
-                <a href="#contact" class="nav-button">Contact</a>
-            </div>
+    <div id="password-overlay">
+        <div class="password-box">
+            <h3>Enter Password</h3>
+            <input type="password" id="password-input" class="password-input">
+            <button onclick="checkPassword()" class="password-button">Unlock</button>
         </div>
-    </nav>
-
-    <!-- ======================= -->
-    <!--        HERO SECTION     -->
-    <!-- ======================= -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1 class="hero-headline">PERPETUAL FLIGHT IS HERE</h1>
-            <p class="hero-subheadline">
-                Developing the world's first sub-50kg autonomous drone with unlimited flight endurance for mission-critical Intelligence, Surveillance, and Reconnaissance.
-            </p>
-            <!-- UPDATED: Button text and mailto link -->
-            <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
-        </div>
-    </header>
-
-    <!-- ======================= -->
-    <!--     TECHNOLOGY SECTION  -->
-    <!-- ======================= -->
-    <div id="technology" class="section-wrapper technology-bg">
-        <section class="section-container">
-            <h2 class="section-title">Core Technology</h2>
-            <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon">⚡️</div><h3 class="feature-title">Perpetual Solar Flight</h3><p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p></div>
-                <div class="feature-card"><div class="feature-icon">📦</div><h3 class="feature-title">Modular Payload System</h3><p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p></div>
-                <div class="feature-card"><div class="feature-icon">🧠</div><h3 class="feature-title">AI-Driven Autonomy</h3><p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p></div>
-            </div>
-        </section>
     </div>
 
     <!-- ======================= -->
-    <!--       ROADMAP SECTION   -->
+    <!--  MAIN WEBSITE CONTENT   -->
     <!-- ======================= -->
-    <div id="roadmap" class="section-wrapper roadmap-bg">
-        <section class="section-container">
-            <h2 class="section-title">Project Roadmap</h2>
-            <div class="timeline">
-                <div class="timeline-item"><div class="timeline-content"><h3>June 2024: Research Phase Initiated</h3><p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p></div></div>
-                <div class="timeline-item"><div class="timeline-content"><h3>April 2025: Milestone Complete</h3><p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p></div></div>
-                <div class="timeline-item"><div class="timeline-content"><h3>Current Phase (Q3 2025): Seed Funding</h3><p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p></div></div>
-                <div class="timeline-item"><div class="timeline-content"><h3>Q4 2025 - Q2 2026: Accelerated Development</h3><p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p></div></div>
-                <div class="timeline-item"><div class="timeline-content"><h3>Summer 2026: Final Testing & Demos</h3><p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p></div></div>
+    <div id="main-content">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="#" class="nav-logo">PHOTON AEROSPACE</a>
+                <input type="checkbox" id="nav-toggle" class="nav-toggle">
+                <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
+                <div class="nav-links">
+                    <a href="#technology">Technology</a>
+                    <a href="#roadmap">Roadmap</a>
+                    <a href="#team">Team</a>
+                    <a href="#contact" class="nav-button">Contact</a>
+                </div>
             </div>
-        </section>
-    </div>
-    
-    <!-- ======================= -->
-    <!--         TEAM SECTION    -->
-    <!-- ======================= -->
-    <div id="team" class="section-wrapper team-bg">
-        <section class="section-container">
-            <h2 class="section-title">Our Team</h2>
-            <div class="team-grid">
-                <div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Hitchings</h3><p class="team-role">Founder & Lead Hardware Design and Production</p><p class="team-bio">Leads the technical vision, aerospace and electrical engineering, and strategic direction of the company.</p></div>
-                <div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Beardsall</h3><p class="team-role">Co-Founder & Lead Developer</p><p class="team-bio">Drives the software architecture, develops the AI flight control systems, and leads the overall technology stack.</p></div>
+        </nav>
+
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="hero-headline">PERPETUAL FLIGHT IS HERE</h1>
+                <p class="hero-subheadline">Developing the world's first sub-50kg autonomous drone with unlimited flight endurance for mission-critical Intelligence, Surveillance, and Reconnaissance.</p>
+                <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
             </div>
-            <h3 class="advisory-title">Advisory Board</h3>
-            <div class="advisor-grid">
-                <div class="advisor-card"><h4 class="advisor-name">[Advisor 1 Name]</h4><p class="advisor-expertise">Defence Procurement Expert</p></div>
-                <div class="advisor-card"><h4 class="advisor-name">[Advisor 2 Name]</h4><p class="advisor-expertise">Autonomous Systems Specialist</p></div>
-                <div class="advisor-card"><h4 class="advisor-name">[Advisor 3 Name]</h4><p class="advisor-expertise">Venture Capital & Finance</p></div>
-            </div>
-        </section>
+        </header>
+
+        <div id="technology" class="section-wrapper technology-bg"><section class="section-container"><h2 class="section-title">Core Technology</h2><div class="features-grid"><div class="feature-card"><div class="feature-icon">⚡️</div><h3 class="feature-title">Perpetual Solar Flight</h3><p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p></div><div class="feature-card"><div class="feature-icon">📦</div><h3 class="feature-title">Modular Payload System</h3><p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p></div><div class="feature-card"><div class="feature-icon">🧠</div><h3 class="feature-title">AI-Driven Autonomy</h3><p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p></div></div></section></div>
+        <div id="roadmap" class="section-wrapper roadmap-bg"><section class="section-container"><h2 class="section-title">Project Roadmap</h2><div class="timeline"><div class="timeline-item"><div class="timeline-content"><h3>June 2024: Research Phase Initiated</h3><p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>April 2025: Milestone Complete</h3><p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Current Phase (Q3 2025): Seed Funding</h3><p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Q4 2025 - Q2 2026: Accelerated Development</h3><p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Summer 2026: Final Testing & Demos</h3><p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p></div></div></div></section></div>
+        <div id="team" class="section-wrapper team-bg"><section class="section-container"><h2 class="section-title">Our Team</h2><div class="team-grid"><div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Hitchings</h3><p class="team-role">Founder & Lead Hardware Design and Production</p><p class="team-bio">Leads the technical vision, aerospace engineering, and strategic direction of the company.</p></div><div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Beardsall</h3><p class="team-role">Co-Founder & Lead Developer</p><p class="team-bio">Drives the software architecture, develops the proprietary AI flight control systems, and leads the overall technology stack.</p></div></div><h3 class="advisory-title">Advisory Board</h3><div class="advisor-grid"><div class="advisor-card"><h4 class="advisor-name">[Advisor 1 Name]</h4><p class="advisor-expertise">Defence Procurement Expert</p></div><div class="advisor-card"><h4 class="advisor-name">[Advisor 2 Name]</h4><p class="advisor-expertise">Autonomous Systems Specialist</p></div><div class="advisor-card"><h4 class="advisor-name">[Advisor 3 Name]</h4><p class="advisor-expertise">Venture Capital & Finance</p></div></div></section></div>
+        <div id="contact" class="section-wrapper contact-bg"><section class="section-container contact-section"><h2 class="section-title">Join Our Mission</h2><p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p><a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a></section></div>
+        <footer class="footer"><p>© 2024 Photon Aerospace Ltd. All Rights Reserved.</p></footer>
     </div>
 
-    <!-- ======================= -->
-    <!--      CONTACT SECTION    -->
-    <!-- ======================= -->
-    <div id="contact" class="section-wrapper contact-bg">
-        <section class="section-container contact-section">
-            <h2 class="section-title">Join Our Mission</h2>
-            <p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p>
-            <!-- UPDATED: Button text and mailto link -->
-            <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
-        </section>
-    </div>
+    <!-- JavaScript for the Password Logic -->
+    <script>
+        function checkPassword() {
+            const correctPassword = 'fish';
+            const enteredPassword = document.getElementById('password-input').value;
 
-    <!-- ======================= -->
-    <!--         FOOTER          -->
-    <!-- ======================= -->
-    <footer class="footer">
-        <p>© 2024 Photon Aerospace Ltd. All Rights Reserved.</p>
-    </footer>
+            if (enteredPassword === correctPassword) {
+                document.getElementById('password-overlay').style.display = 'none';
+                document.getElementById('main-content').style.visibility = 'visible';
+            } else {
+                alert('Incorrect Password');
+                document.getElementById('password-input').value = '';
+            }
+        }
 
+        // Allow pressing "Enter" to submit the password
+        document.getElementById('password-input').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkPassword();
+            }
+        });
+    </script>
 </body>
 </html>
