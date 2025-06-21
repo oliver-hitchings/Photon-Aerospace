@@ -1,4 +1,4 @@
-/* --- Global Styles (Mostly Unchanged) --- */
+/* --- Global Styles --- */
 :root {
     --primary-color: #00aaff;
     --background-color: #0d1117;
@@ -11,7 +11,7 @@ html { scroll-behavior: smooth; }
 body { font-family: 'Roboto', sans-serif; background-color: var(--background-color); color: var(--text-color); }
 h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); font-weight: 600; text-transform: uppercase; }
 
-/* --- Navigation Bar (Unchanged) --- */
+/* --- Navigation Bar --- */
 .navbar { background-color: rgba(13, 17, 23, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem 2rem; position: fixed; width: 100%; top: 0; z-index: 1000; }
 .nav-container { max-width: var(--container-width); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .nav-logo { font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--headline-color); text-decoration: none; letter-spacing: 2px; z-index: 10; }
@@ -25,27 +25,29 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /* ================================== */
 /*  SCROLL SEQUENCE STYLES        */
 /* ================================== */
-#scroll-sequence-container {
-    /* UPDATED: Height adjusted for fewer frames */
-    height: 3000px;
-    position: relative;
-    z-index: 1;
-}
+#scroll-sequence-container { height: 3000px; position: relative; z-index: 1; }
 #image-canvas { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; }
 #camera-text-content { position: sticky; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; max-width: 500px; padding: 2rem; color: white; background-color: rgba(13, 17, 23, 0.7); backdrop-filter: blur(10px); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
 #camera-text-content h2 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); }
 #camera-text-content p { font-size: 1.1rem; line-height: 1.6; }
 #rest-of-site { position: relative; z-index: 10; background-color: var(--background-color); }
 
-/* --- All other section styles (Technology, Roadmap, Team, etc.) are the same --- */
+/* --- Section Styles --- */
 .section-wrapper { position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-size: cover; background-position: center center; background-attachment: fixed; }
 .section-wrapper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(13, 17, 23, 0.85); z-index: 1; }
 .section-container { max-width: var(--container-width); margin: 0 auto; padding: 6rem 2rem; text-align: center; position: relative; z-index: 2; }
 .section-title { font-size: 3rem; margin-bottom: 3rem; letter-spacing: 2px; }
-.technology-bg { background-image: url('YOUR_TECHNOLOGY_IMAGE.jpg'); }
-.roadmap-bg { background-image: url('YOUR_ROADMAP_IMAGE.jpg'); }
-.team-bg { background-image: url('YOUR_TEAM_OR_OFFICE_IMAGE.jpg'); }
+
+/*
+* UPDATED: Reverted to simple background colors to fix 404 errors.
+* When you have images ready, you can change these back to background-image.
+*/
+.technology-bg { background-color: var(--background-color); }
+.roadmap-bg { background-color: var(--background-color); }
+.team-bg { background-color: var(--background-color); }
 .contact-bg { background: var(--background-color); }
+
+/* --- All other styles remain the same --- */
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: left; }
 .feature-card { background-color: rgba(22, 27, 34, 0.7); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 2rem; transition: transform 0.3s ease, border-color 0.3s ease; }
 .feature-card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
