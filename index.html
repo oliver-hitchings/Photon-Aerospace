@@ -41,16 +41,104 @@
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
             <div id="technology" class="section-wrapper technology-bg">
-                <!-- Technology Section Content... -->
+                <section class="section-container">
+                    <h2 class="section-title">Core Technology</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡️</div>
+                            <h3 class="feature-title">Perpetual Solar Flight</h3>
+                            <p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📦</div>
+                            <h3 class="feature-title">Modular Payload System</h3>
+                            <p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🧠</div>
+                            <h3 class="feature-title">AI-Driven Autonomy</h3>
+                            <p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div id="roadmap" class="section-wrapper roadmap-bg">
-                <!-- Roadmap Section Content... -->
+                <section class="section-container">
+                    <h2 class="section-title">Project Roadmap</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h3>June 2024: Research Phase Initiated</h3>
+                                <p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h3>April 2025: Milestone Complete</h3>
+                                <p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h3>Current Phase (Q3 2025): Seed Funding</h3>
+                                <p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h3>Q4 2025 - Q2 2026: Accelerated Development</h3>
+                                <p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h3>Summer 2026: Final Testing & Demos</h3>
+                                <p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div id="team" class="section-wrapper team-bg">
-                <!-- Team Section Content... -->
+                <section class="section-container">
+                    <h2 class="section-title">Our Team</h2>
+                    <div class="team-grid">
+                        <div class="team-member">
+                            <div class="team-photo-placeholder"></div>
+                            <h3 class="team-name">Oliver Hitchings</h3>
+                            <p class="team-role">Founder & Lead Hardware Design and Production</p>
+                            <p class="team-bio">Leads the technical vision, aerospace engineering, and strategic direction of the company.</p>
+                        </div>
+                        <div class="team-member">
+                            <div class="team-photo-placeholder"></div>
+                            <h3 class="team-name">Oliver Beardsall</h3>
+                            <p class="team-role">Co-Founder & Lead Developer</p>
+                            <p class="team-bio">Drives the software architecture, develops the proprietary AI flight control systems, and leads the overall technology stack.</p>
+                        </div>
+                    </div>
+                    <h3 class="advisory-title">Advisory Board</h3>
+                    <div class="advisor-grid">
+                        <div class="advisor-card">
+                            <h4 class="advisor-name">[Advisor 1 Name]</h4>
+                            <p class="advisor-expertise">Defence Procurement Expert</p>
+                        </div>
+                        <div class="advisor-card">
+                            <h4 class="advisor-name">[Advisor 2 Name]</h4>
+                            <p class="advisor-expertise">Autonomous Systems Specialist</p>
+                        </div>
+                        <div class="advisor-card">
+                            <h4 class="advisor-name">[Advisor 3 Name]</h4>
+                            <p class="advisor-expertise">Venture Capital & Finance</p>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div id="contact" class="section-wrapper contact-bg">
-                <!-- Contact Section Content... -->
+                <section class="section-container contact-section">
+                    <h2 class="section-title">Join Our Mission</h2>
+                    <p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p>
+                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
+                </section>
             </div>
             <footer class="footer">
                 <p>© 2025 Photon Aerospace Ltd. All Rights Reserved.</p>
@@ -156,7 +244,7 @@
             }
 
             cameraText.style.opacity = textOpacity;
-            cameraText.style.transform = `translate(-50%, -50%) ${textTransform}`;
+            cameraText.style.transform = `translate(-30%, -50%) ${textTransform}`;
         }
 
         preloadImages();
