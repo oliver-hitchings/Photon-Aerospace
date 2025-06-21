@@ -11,6 +11,11 @@
 </head>
 <body>
 
+    <!-- NEW: Welcome banner moved here for independent control -->
+    <div id="welcome-banner">
+        <h1>Welcome to the Future of Autonomous Flight</h1>
+    </div>
+
     <!-- This part of the site is visible AFTER the scroll animation -->
     <div id="main-content">
         <nav class="navbar">
@@ -32,11 +37,6 @@
         <!-- ======================= -->
         <div id="scroll-sequence-container">
             <canvas id="image-canvas"></canvas>
-            
-            <!-- NEW: Welcome banner -->
-            <div id="welcome-banner">
-                <h1>Welcome to the Future of Autonomous Flight</h1>
-            </div>
             
             <div id="camera-text-content">
                 <h2>Modular Payloads for ISTAR</h2>
@@ -162,7 +162,6 @@
         const context = canvas.getContext('2d');
         const scrollContainer = document.getElementById('scroll-sequence-container');
         const cameraText = document.getElementById('camera-text-content');
-        const welcomeBanner = document.getElementById('welcome-banner');
 
         // --- CONFIGURATION ---
         const config = {
@@ -175,11 +174,8 @@
             pauseEnd: 0.55,
             fadeInDuration: 0.1,
             fadeOutDuration: 0.15,
-            welcomeFadeStart: 0.1,
-            welcomeFadeEnd: 0.3,
-            // NEW: Performance settings
-            preloadRange: 20, // Number of images to preload around current frame
-            mobileFrameSkip: 3, // Skip frames on mobile for better performance
+            preloadRange: 20,
+            mobileFrameSkip: 3,
             isMobile: window.innerWidth <= 768
         };
         
@@ -288,15 +284,6 @@
             let frameIndex;
             let textOpacity = 0;
             let textTransform = 'translateY(20px)';
-            let welcomeOpacity = 1;
-
-            // Welcome banner fade logic
-            if (scrollFraction >= config.welcomeFadeStart && scrollFraction <= config.welcomeFadeEnd) {
-                const fadeProgress = 1 - ((scrollFraction - config.welcomeFadeStart) / (config.welcomeFadeEnd - config.welcomeFadeStart));
-                welcomeOpacity = fadeProgress;
-            } else if (scrollFraction > config.welcomeFadeEnd) {
-                welcomeOpacity = 0;
-            }
 
             if (scrollFraction >= config.pauseStart && scrollFraction <= config.pauseEnd) {
                 frameIndex = config.pauseFrame;
@@ -365,7 +352,6 @@
             // Update text positions
             cameraText.style.opacity = textOpacity;
             cameraText.style.transform = `translate(-20%, -50%) ${textTransform}`;
-            welcomeBanner.style.opacity = welcomeOpacity;
         }
 
         // Feature card hover effects - UPDATED for proper background positioning
@@ -426,6 +412,20 @@
         }
 
         preloadImages();
+
+        // --- NEW: Welcome Banner Fade Out Logic ---
+        const welcomeBanner = document.getElementById('welcome-banner');
+        const handleBannerFade = () => {
+            // Fade out banner after scrolling down a bit
+            if (window.scrollY > 50) {
+                welcomeBanner.style.opacity = '0';
+                // After the fade transition, hide it completely to improve performance
+                setTimeout(() => { welcomeBanner.style.display = 'none'; }, 1000); // 1s matches CSS transition
+                // Remove the listener after it has done its job
+                window.removeEventListener('scroll', handleBannerFade);
+            }
+        };
+        window.addEventListener('scroll', handleBannerFade);
     </script>
 </body>
 </html>

@@ -28,38 +28,30 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 #scroll-sequence-container { height: 3000px; position: relative; z-index: 1; transform: translateZ(0); will-change: transform; }
 #image-canvas { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; transform: translateZ(0); will-change: transform; }
 
-/* NEW: Welcome banner styles - moved up and new font */
-#welcome-banner { 
-    position: sticky; 
-    top: 20%;
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    z-index: 5; 
-    text-align: center; 
-    opacity: 1; 
-    transition: opacity 0.5s ease; 
-    width: 90%;
-    max-width: 800px;
+/* --- REBUILT WELCOME BANNER --- */
+#welcome-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 1001; /* Above navbar */
+    opacity: 1;
+    transition: opacity 1s ease-out;
+    pointer-events: none; /* Let clicks pass through to the canvas */
 }
-#welcome-banner h1 { 
-    font-size: 4rem; 
-    color: var(--headline-color); 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    background: linear-gradient(45deg, var(--primary-color), #ffffff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    padding: 2rem;
-    background-color: rgba(13, 17, 23, 0.8);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    /* NEW: Different font */
+
+#welcome-banner h1 {
     font-family: 'Teko', sans-serif;
     font-weight: 600;
-    letter-spacing: 3px;
+    /* Responsive font that looks good on all screen sizes */
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    color: white;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* Soft, pronounced shadow */
+    padding: 1rem;
+    margin: 0;
 }
 
 #camera-text-content { 
