@@ -71,9 +71,11 @@
             imagePrefix: '',
             imageExtension: '.png',
             frameCount: 210,
-            pauseFrame: 150,
-            pauseStart: 0.5,
-            pauseEnd: 0.7,
+            pauseFrame: 105,
+            pauseStart: 0.45,
+            pauseEnd: 0.55,
+            fadeInDuration: 0.1,
+            fadeOutDuration: 0.15
         };
         
         // Make canvas responsive
@@ -121,17 +123,29 @@
             scrollFraction = Math.max(0, Math.min(1, scrollFraction));
 
             let frameIndex;
+            let textOpacity = 0;
+            let textTransform = 'translateY(20px)';
 
             if (scrollFraction >= config.pauseStart && scrollFraction <= config.pauseEnd) {
                 frameIndex = config.pauseFrame;
-                cameraText.style.opacity = 1;
-                cameraText.style.transform = 'translateY(0)';
+                textOpacity = 1;
+                textTransform = 'translateY(0)';
+            } else if (scrollFraction >= (config.pauseStart - config.fadeInDuration) && scrollFraction < config.pauseStart) {
+                const fadeProgress = (scrollFraction - (config.pauseStart - config.fadeInDuration)) / config.fadeInDuration;
+                frameIndex = Math.floor((config.pauseStart - config.fadeInDuration) * config.frameCount + fadeProgress * config.fadeInDuration * config.frameCount);
+                textOpacity = fadeProgress;
+                textTransform = `translateY(${20 - (fadeProgress * 20)}px)`;
+            } else if (scrollFraction > config.pauseEnd && scrollFraction <= (config.pauseEnd + config.fadeOutDuration)) {
+                const fadeProgress = 1 - ((scrollFraction - config.pauseEnd) / config.fadeOutDuration);
+                frameIndex = Math.floor(config.pauseEnd * config.frameCount + (scrollFraction - config.pauseEnd) * config.frameCount);
+                textOpacity = fadeProgress;
+                textTransform = `translateY(${20 - (fadeProgress * 20)}px)`;
             } else {
                 let range = 1 - (config.pauseEnd - config.pauseStart);
                 let progress = (scrollFraction < config.pauseStart) ? scrollFraction / config.pauseStart * (config.pauseStart / range) : (scrollFraction - config.pauseEnd) / (1 - config.pauseEnd) * ( (1 - config.pauseEnd) / range ) + (config.pauseStart / range);
                 frameIndex = Math.floor(progress * config.frameCount);
-                cameraText.style.opacity = 0;
-                cameraText.style.transform = 'translateY(20px)';
+                textOpacity = 0;
+                textTransform = 'translateY(20px)';
             }
             
             frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
@@ -140,6 +154,9 @@
             if(images[frameIndex] && images[frameIndex].complete) {
                 context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
             }
+
+            cameraText.style.opacity = textOpacity;
+            cameraText.style.transform = `translate(-50%, -50%) ${textTransform}`;
         }
 
         preloadImages();
