@@ -8,79 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- CSS for the Password Overlay -->
-    <style>
-        #password-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0d1117; /* Matches site background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .password-box {
-            background-color: #161b22;
-            padding: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            width: 320px;
-        }
-        .password-box h3 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        .password-input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1.5rem;
-            background-color: #0d1117;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            color: white;
-            font-size: 1rem;
-        }
-        .password-button {
-            width: 100%;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 5px;
-            background-color: #00aaff;
-            color: white;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .password-button:hover {
-            background-color: #0099e6;
-        }
-        #main-content {
-            visibility: hidden; /* Hide the main site content initially */
-        }
-    </style>
 </head>
 <body>
 
-    <!-- ======================= -->
-    <!--  PASSWORD OVERLAY       -->
-    <!-- ======================= -->
-    <div id="password-overlay">
-        <div class="password-box">
-            <h3>Enter Password</h3>
-            <input type="password" id="password-input" class="password-input">
-            <button onclick="checkPassword()" class="password-button">Unlock</button>
-        </div>
-    </div>
-
-    <!-- ======================= -->
-    <!--  MAIN WEBSITE CONTENT   -->
-    <!-- ======================= -->
+    <!-- This part of the site is visible AFTER the scroll animation -->
     <div id="main-content">
         <nav class="navbar">
             <div class="nav-container">
@@ -96,43 +27,109 @@
             </div>
         </nav>
 
-        <header class="hero">
-            <div class="hero-content">
-                <h1 class="hero-headline">PERPETUAL FLIGHT IS HERE</h1>
-                <p class="hero-subheadline">Developing the world's first sub-50kg autonomous drone with unlimited flight endurance for mission-critical Intelligence, Surveillance, and Reconnaissance.</p>
-                <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
+        <!-- ======================= -->
+        <!--  SCROLL ANIMATION AREA  -->
+        <!-- ======================= -->
+        <div id="scroll-sequence-container">
+            <canvas id="image-canvas"></canvas>
+            <div id="camera-text-content">
+                <h2>Modular Payloads for ISTAR</h2>
+                <p>Our drone features a hot-swappable payload bay, allowing for mission-specific customization with high-resolution cameras, signals intelligence packages, and advanced sensor suites.</p>
             </div>
-        </header>
+        </div>
 
-        <div id="technology" class="section-wrapper technology-bg"><section class="section-container"><h2 class="section-title">Core Technology</h2><div class="features-grid"><div class="feature-card"><div class="feature-icon">⚡️</div><h3 class="feature-title">Perpetual Solar Flight</h3><p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p></div><div class="feature-card"><div class="feature-icon">📦</div><h3 class="feature-title">Modular Payload System</h3><p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p></div><div class="feature-card"><div class="feature-icon">🧠</div><h3 class="feature-title">AI-Driven Autonomy</h3><p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p></div></div></section></div>
-        <div id="roadmap" class="section-wrapper roadmap-bg"><section class="section-container"><h2 class="section-title">Project Roadmap</h2><div class="timeline"><div class="timeline-item"><div class="timeline-content"><h3>June 2024: Research Phase Initiated</h3><p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>April 2025: Milestone Complete</h3><p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Current Phase (Q3 2025): Seed Funding</h3><p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Q4 2025 - Q2 2026: Accelerated Development</h3><p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p></div></div><div class="timeline-item"><div class="timeline-content"><h3>Summer 2026: Final Testing & Demos</h3><p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p></div></div></div></section></div>
-        <div id="team" class="section-wrapper team-bg"><section class="section-container"><h2 class="section-title">Our Team</h2><div class="team-grid"><div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Hitchings</h3><p class="team-role">Founder & Lead Hardware Design and Production</p><p class="team-bio">Leads the technical vision, aerospace engineering, and strategic direction of the company.</p></div><div class="team-member"><div class="team-photo-placeholder"></div><h3 class="team-name">Oliver Beardsall</h3><p class="team-role">Co-Founder & Lead Developer</p><p class="team-bio">Drives the software architecture, develops the proprietary AI flight control systems, and leads the overall technology stack.</p></div></div><h3 class="advisory-title">Advisory Board</h3><div class="advisor-grid"><div class="advisor-card"><h4 class="advisor-name">[Advisor 1 Name]</h4><p class="advisor-expertise">Defence Procurement Expert</p></div><div class="advisor-card"><h4 class="advisor-name">[Advisor 2 Name]</h4><p class="advisor-expertise">Autonomous Systems Specialist</p></div><div class="advisor-card"><h4 class="advisor-name">[Advisor 3 Name]</h4><p class="advisor-expertise">Venture Capital & Finance</p></div></div></section></div>
-        <div id="contact" class="section-wrapper contact-bg"><section class="section-container contact-section"><h2 class="section-title">Join Our Mission</h2><p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p><a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a></section></div>
-        <footer class="footer"><p>© 2024 Photon Aerospace Ltd. All Rights Reserved.</p></footer>
+        <!-- The rest of your website content starts here -->
+        <div id="rest-of-site">
+            <div id="technology" class="section-wrapper technology-bg">
+                <!-- Technology Section Content... -->
+            </div>
+            <div id="roadmap" class="section-wrapper roadmap-bg">
+                <!-- Roadmap Section Content... -->
+            </div>
+            <div id="team" class="section-wrapper team-bg">
+                <!-- Team Section Content... -->
+            </div>
+            <div id="contact" class="section-wrapper contact-bg">
+                <!-- Contact Section Content... -->
+            </div>
+            <footer class="footer">
+                <p>© 2025 Photon Aerospace Ltd. All Rights Reserved.</p>
+            </footer>
+        </div>
     </div>
 
-    <!-- JavaScript for the Password Logic -->
+    <!-- The JavaScript that runs the animation -->
     <script>
-        function checkPassword() {
-            const correctPassword = 'fish';
-            const enteredPassword = document.getElementById('password-input').value;
+        const canvas = document.getElementById('image-canvas');
+        const context = canvas.getContext('2d');
+        const scrollContainer = document.getElementById('scroll-sequence-container');
+        const cameraText = document.getElementById('camera-text-content');
 
-            if (enteredPassword === correctPassword) {
-                document.getElementById('password-overlay').style.display = 'none';
-                document.getElementById('main-content').style.visibility = 'visible';
-            } else {
-                alert('Incorrect Password');
-                document.getElementById('password-input').value = '';
+        // --- CONFIGURATION ---
+        const config = {
+            imagePath: 'sequence/',
+            imagePrefix: '',
+            imageExtension: '.png',
+            // UPDATED: Total number of images is now 210
+            frameCount: 210,
+            // UPDATED: The pause frame must be within the new frame count.
+            // You should change this to the exact frame number where the camera is in view.
+            pauseFrame: 150,
+            pauseStart: 0.5,
+            pauseEnd: 0.7,
+        };
+        
+        canvas.width = 1920;
+        canvas.height = 1080;
+        const images = [];
+        let frame = { current: 0 };
+
+        function preloadImages() {
+            for (let i = 1; i <= config.frameCount; i++) {
+                const img = new Image();
+                const num = i.toString().padStart(4, '0');
+                img.src = `${config.imagePath}${config.imagePrefix}${num}${config.imageExtension}`;
+                images.push(img);
             }
         }
 
-        // Allow pressing "Enter" to submit the password
-        document.getElementById('password-input').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                checkPassword();
+        // --- The rest of the script is unchanged ---
+        function updateImage() {
+            const rect = scrollContainer.getBoundingClientRect();
+            const scrollTop = -rect.top;
+            const maxScrollTop = scrollContainer.scrollHeight - window.innerHeight;
+            let scrollFraction = scrollTop / maxScrollTop;
+            
+            scrollFraction = Math.max(0, Math.min(1, scrollFraction));
+
+            let frameIndex;
+
+            if (scrollFraction >= config.pauseStart && scrollFraction <= config.pauseEnd) {
+                frameIndex = config.pauseFrame;
+                cameraText.style.opacity = 1;
+                cameraText.style.transform = 'translateY(0)';
+            } else {
+                let range = 1 - (config.pauseEnd - config.pauseStart);
+                let progress = (scrollFraction < config.pauseStart) ? scrollFraction / config.pauseStart * (config.pauseStart / range) : (scrollFraction - config.pauseEnd) / (1 - config.pauseEnd) * ( (1 - config.pauseEnd) / range ) + (config.pauseStart / range);
+                frameIndex = Math.floor(progress * config.frameCount);
+                cameraText.style.opacity = 0;
+                cameraText.style.transform = 'translateY(20px)';
             }
+            
+            frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            if(images[frameIndex]) {
+                context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        images[0]?.addEventListener('load', () => {
+            context.drawImage(images[0], 0, 0, canvas.width, canvas.height);
+            window.addEventListener('scroll', updateImage);
         });
+
+        preloadImages();
     </script>
 </body>
 </html>
