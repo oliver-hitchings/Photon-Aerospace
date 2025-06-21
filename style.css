@@ -4,7 +4,7 @@
     --background-color: #0d1117;
     --text-color: #c9d1d9;
     --headline-color: #ffffff;
-    --container-width: 1200px;
+    --container-width: 1600px; /* Increased from 1200px for better 1440p layout */
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -46,7 +46,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     font-family: 'Teko', sans-serif;
     font-weight: 600;
     /* Responsive font that looks good on all screen sizes */
-    font-size: clamp(2.5rem, 6vw, 6rem);
+    font-size: clamp(2.5rem, 4.5vw, 5.5rem); /* Adjusted for better scaling between 1080p and 1440p */
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.1em;
