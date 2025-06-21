@@ -70,18 +70,23 @@
             imagePath: 'sequence/',
             imagePrefix: '',
             imageExtension: '.png',
-            // UPDATED: Total number of images is now 210
             frameCount: 210,
-            // UPDATED: The pause frame must be within the new frame count.
-            // You should change this to the exact frame number where the camera is in view.
             pauseFrame: 150,
             pauseStart: 0.5,
             pauseEnd: 0.7,
         };
         
-        canvas.width = 1920;
-        canvas.height = 1080;
+        // Make canvas responsive
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
         const images = [];
+        let loadedImages = 0;
         let frame = { current: 0 };
 
         function preloadImages() {
@@ -89,11 +94,24 @@
                 const img = new Image();
                 const num = i.toString().padStart(4, '0');
                 img.src = `${config.imagePath}${config.imagePrefix}${num}${config.imageExtension}`;
+                
+                img.onload = () => {
+                    loadedImages++;
+                    if (loadedImages === 1) {
+                        // Draw first image immediately when it loads
+                        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        window.addEventListener('scroll', updateImage);
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.error(`Failed to load image: ${img.src}`);
+                };
+                
                 images.push(img);
             }
         }
 
-        // --- The rest of the script is unchanged ---
         function updateImage() {
             const rect = scrollContainer.getBoundingClientRect();
             const scrollTop = -rect.top;
@@ -119,15 +137,10 @@
             frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
 
             context.clearRect(0, 0, canvas.width, canvas.height);
-            if(images[frameIndex]) {
+            if(images[frameIndex] && images[frameIndex].complete) {
                 context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
             }
         }
-        
-        images[0]?.addEventListener('load', () => {
-            context.drawImage(images[0], 0, 0, canvas.width, canvas.height);
-            window.addEventListener('scroll', updateImage);
-        });
 
         preloadImages();
     </script>
