@@ -47,7 +47,7 @@
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
             <div id="technology" class="section-wrapper technology-bg">
-                <!-- NEW: Background overlay moved inside technology section -->
+                <!-- ► background overlay now sits inside technology section ◄ -->
                 <div class="feature-background" id="feature-background"></div>
                 
                 <section class="section-container">
@@ -369,38 +369,43 @@
         }
 
         // Feature card hover effects - UPDATED for proper background positioning
-        document.addEventListener('DOMContentLoaded', function() {
-            const featureCards = document.querySelectorAll('.feature-card');
-            const featureBackground = document.getElementById('feature-background');
-            
+        document.addEventListener('DOMContentLoaded', () => {
+            const featureCards       = document.querySelectorAll('.feature-card');
+            const featureBackground  = document.getElementById('feature-background');
+            const technologySection  = document.getElementById('technology');
+
             featureCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    const backgroundImage = this.getAttribute('data-background');
-                    if (backgroundImage) {
-                        // NEW: Add error handling for image loading
-                        const testImg = new Image();
-                        testImg.onload = function() {
-                            featureBackground.style.backgroundImage = `url('${backgroundImage}')`;
-                            featureBackground.classList.add('active');
-                        };
-                        testImg.onerror = function() {
-                            console.error(`Failed to load background image: ${backgroundImage}`);
-                            // Fallback to a gradient or solid color
-                            featureBackground.style.background = 'linear-gradient(45deg, var(--primary-color), #0099e6)';
-                            featureBackground.classList.add('active');
-                        };
-                        testImg.src = backgroundImage;
-                    }
+                card.addEventListener('mouseenter', () => {
+                    const imgSrc = card.getAttribute('data-background');
+                    if (!imgSrc) return;
+
+                    /* preload / test the image */
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        featureBackground.style.backgroundImage = `url('${imgSrc}')`;
+                        featureBackground.classList.add('active');
+                        technologySection.classList.add('bg-active');   // dim mask
+                    };
+                    testImg.onerror = () => {
+                        console.error(`Unable to load ${imgSrc}`);
+                        featureBackground.style.background =
+                            'linear-gradient(45deg,var(--primary-color),#0099e6)';
+                        featureBackground.classList.add('active');
+                        technologySection.classList.add('bg-active');
+                    };
+                    testImg.src = imgSrc;
                 });
-                
-                card.addEventListener('mouseleave', function() {
+
+                card.addEventListener('mouseleave', () => {
                     featureBackground.classList.remove('active');
+                    technologySection.classList.remove('bg-active');
                 });
             });
-            
-            // Close background when clicking outside
-            featureBackground.addEventListener('click', function() {
-                this.classList.remove('active');
+
+            /* click anywhere on the overlay to close */
+            featureBackground.addEventListener('click', () => {
+                featureBackground.classList.remove('active');
+                technologySection.classList.remove('bg-active');
             });
         });
 

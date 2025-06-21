@@ -31,7 +31,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /* NEW: Welcome banner styles - moved up and new font */
 #welcome-banner { 
     position: sticky; 
-    top: 30%; /* UPDATED: Moved up from 50% to 30% */
+    top: 20%;
     left: 50%; 
     transform: translate(-50%, -50%); 
     z-index: 5; 
@@ -222,7 +222,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     #welcome-banner {
         width: 95%;
         max-width: 400px;
-        top: 25%; /* UPDATED: Even higher on mobile */
+        top: 20%;
     }
     
     #camera-text-content { 
@@ -282,11 +282,18 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 0.5s ease;
-    z-index: 0; /* UPDATED: Behind content */
+    z-index: 2;
     pointer-events: none;
 }
 
 .feature-background.active {
     opacity: 1;
+    filter: brightness(1.35) saturate(1.2);
     pointer-events: auto;
 }
+
+/* ★ fade-out mask when a tech-card is active */
+.technology-bg::before {
+    transition: opacity 0.3s ease;
+}
+.technology-bg.bg-active::before { opacity: 0.20; }
