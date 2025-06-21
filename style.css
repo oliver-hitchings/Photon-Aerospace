@@ -28,10 +28,10 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 #scroll-sequence-container { height: 3000px; position: relative; z-index: 1; transform: translateZ(0); will-change: transform; }
 #image-canvas { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; transform: translateZ(0); will-change: transform; }
 
-/* NEW: Welcome banner styles - fixed positioning */
+/* NEW: Welcome banner styles - moved up and new font */
 #welcome-banner { 
     position: sticky; 
-    top: 50%; 
+    top: 30%; /* UPDATED: Moved up from 50% to 30% */
     left: 50%; 
     transform: translate(-50%, -50%); 
     z-index: 5; 
@@ -55,6 +55,11 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     backdrop-filter: blur(10px);
     border-radius: 15px;
     border: 2px solid rgba(255, 255, 255, 0.1);
+    /* NEW: Different font */
+    font-family: 'Teko', sans-serif;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 #camera-text-content { 
@@ -91,6 +96,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .technology-bg {
     position: relative;
     z-index: 1;
+    overflow: hidden; /* NEW: Contain the background */
     background-color: var(--background-color);
 }
 .roadmap-bg { background-color: var(--background-color); }
@@ -98,7 +104,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .contact-bg { background: var(--background-color); }
 
 /* --- All other styles remain the same --- */
-.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: left; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: left; position: relative; z-index: 2; }
 .feature-card { 
     background-color: rgba(22, 27, 34, 0.7); 
     backdrop-filter: blur(5px); 
@@ -166,17 +172,20 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .hero-button { 
     display: inline-block;
     background-color: var(--primary-color); 
-    color: var(--headline-color); 
+    color: var(--headline-color) !important; /* UPDATED: Force color */
     padding: 1rem 2rem; 
     border-radius: 5px; 
     text-decoration: none; 
     font-weight: 700; 
     transition: background-color 0.3s ease; 
     white-space: nowrap; 
+    border: none;
+    cursor: pointer;
 }
 .hero-button:hover { 
     background-color: #0099e6; 
     color: var(--headline-color) !important; 
+    text-decoration: none;
 }
 .footer { text-align: center; padding: 2rem; background-color: #0d1117; }
 .footer p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
@@ -207,11 +216,13 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
         font-size: 2.5rem; 
         padding: 1.5rem;
         line-height: 1.2;
+        letter-spacing: 2px;
     }
     
     #welcome-banner {
         width: 95%;
         max-width: 400px;
+        top: 25%; /* UPDATED: Even higher on mobile */
     }
     
     #camera-text-content { 
@@ -259,9 +270,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 }
 
-/* NEW: Full background image overlay */
+/* UPDATED: Feature background overlay - positioned behind Core Technology section */
 .feature-background {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -271,7 +282,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 0.5s ease;
-    z-index: 1;
+    z-index: 0; /* UPDATED: Behind content */
     pointer-events: none;
 }
 

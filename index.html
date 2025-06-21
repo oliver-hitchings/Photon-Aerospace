@@ -46,10 +46,10 @@
 
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
-            <!-- NEW: Background overlay for feature cards -->
-            <div class="feature-background" id="feature-background"></div>
-            
             <div id="technology" class="section-wrapper technology-bg">
+                <!-- NEW: Background overlay moved inside technology section -->
+                <div class="feature-background" id="feature-background"></div>
+                
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
                     <div class="features-grid">
@@ -146,7 +146,8 @@
                 <section class="section-container contact-section">
                     <h2 class="section-title">Join Our Mission</h2>
                     <p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p>
-                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver,%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan,%20technical%20reports,%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards," class="hero-button">Investor Relations</a>
+                    <!-- UPDATED: Fixed email button with proper encoding -->
+                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver%2C%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan%2C%20technical%20reports%2C%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards%2C" class="hero-button" target="_blank">Investor Relations</a>
                 </section>
             </div>
             <footer class="footer">
@@ -367,7 +368,7 @@
             welcomeBanner.style.opacity = welcomeOpacity;
         }
 
-        // Feature card hover effects - UPDATED for full background
+        // Feature card hover effects - UPDATED for proper background positioning
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
             const featureBackground = document.getElementById('feature-background');
@@ -376,8 +377,19 @@
                 card.addEventListener('mouseenter', function() {
                     const backgroundImage = this.getAttribute('data-background');
                     if (backgroundImage) {
-                        featureBackground.style.backgroundImage = `url('${backgroundImage}')`;
-                        featureBackground.classList.add('active');
+                        // NEW: Add error handling for image loading
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            featureBackground.style.backgroundImage = `url('${backgroundImage}')`;
+                            featureBackground.classList.add('active');
+                        };
+                        testImg.onerror = function() {
+                            console.error(`Failed to load background image: ${backgroundImage}`);
+                            // Fallback to a gradient or solid color
+                            featureBackground.style.background = 'linear-gradient(45deg, var(--primary-color), #0099e6)';
+                            featureBackground.classList.add('active');
+                        };
+                        testImg.src = backgroundImage;
                     }
                 });
                 
