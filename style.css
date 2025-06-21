@@ -31,7 +31,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /* --- REBUILT WELCOME BANNER --- */
 #welcome-banner {
     position: fixed;
-    top: 50%;
+    top: 25%; /* Moved up from 50% to be nearer the top */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
@@ -93,12 +93,12 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     background-color: var(--background-color);
 }
 
-/* ★ UPDATED: Fade out the dark mask when a background is active in either section */
-.technology-bg.bg-active::before,
-.roadmap-bg.bg-active::before {
+/* ★ UPDATED: Fade out effect now only applies to the technology section */
+.technology-bg.bg-active::before {
     opacity: 0.2;
 }
 
+.roadmap-bg { background-color: var(--background-color); }
 .team-bg { background-color: var(--background-color); }
 .contact-bg {
     background: url('assets/JoinOurMission.png') center/cover fixed
@@ -272,9 +272,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 }
 
-/* ★ UPDATED: Shared styles for both background overlays */
-.feature-background,
-.timeline-background {
+/* ★ UPDATED: Styles now only apply to the feature background */
+.feature-background {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background-size: cover; background-position: center;
@@ -286,7 +285,6 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     filter: brightness(1.35) saturate(1.2); /* Make images pop */
 }
 
-.feature-background.active,
-.timeline-background.active {
+.feature-background.active {
     opacity: 1;
 }

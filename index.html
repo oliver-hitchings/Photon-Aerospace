@@ -71,35 +71,34 @@
                 </section>
             </div>
             <div id="roadmap" class="section-wrapper roadmap-bg">
-                <div class="timeline-background" id="timeline-background"></div>
                 <section class="section-container">
                     <h2 class="section-title">Project Roadmap</h2>
                     <div class="timeline">
-                        <div class="timeline-item" data-background="assets/Research Phase.png">
+                        <div class="timeline-item">
                             <div class="timeline-content">
                                 <h3>June 2024: Research Phase Initiated</h3>
                                 <p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p>
                             </div>
                         </div>
-                        <div class="timeline-item" data-background="assets/Milestone.png">
+                        <div class="timeline-item">
                             <div class="timeline-content">
                                 <h3>April 2025: Milestone Complete</h3>
                                 <p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p>
                             </div>
                         </div>
-                        <div class="timeline-item" data-background="assets/Current Phase.png">
+                        <div class="timeline-item">
                             <div class="timeline-content">
                                 <h3>Current Phase (Q3 2025): Seed Funding</h3>
                                 <p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p>
                             </div>
                         </div>
-                        <div class="timeline-item" data-background="assets/Accelerated Development.png">
+                        <div class="timeline-item">
                             <div class="timeline-content">
                                 <h3>Q4 2025 - Q2 2026: Accelerated Development</h3>
                                 <p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p>
                             </div>
                         </div>
-                        <div class="timeline-item" data-background="assets/Summer2026.png">
+                        <div class="timeline-item">
                             <div class="timeline-content">
                                 <h3>Summer 2026: Final Testing & Demos</h3>
                                 <p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p>
@@ -431,44 +430,35 @@
             const welcomeBanner = document.getElementById('welcome-banner');
             // ... (rest of banner logic) ...
 
-            // --- Helper function to manage background overlays ---
-            const setupPersistentBackgrounds = (sectionId, itemSelector, backgroundId) => {
-                const section = document.getElementById(sectionId);
-                const items = document.querySelectorAll(itemSelector);
-                const backgroundDiv = document.getElementById(backgroundId);
+            // --- UPDATED: Simplified setup for only the Core Technology Section ---
+            const technologySection = document.getElementById('technology');
+            const featureCards = document.querySelectorAll('.feature-card');
+            const featureBackground = document.getElementById('feature-background');
 
-                if (!section || items.length === 0 || !backgroundDiv) {
-                    console.error("Missing elements for persistent background setup:", {sectionId, itemSelector, backgroundId});
-                    return;
-                }
-
+            if (technologySection && featureCards.length > 0 && featureBackground) {
                 // Show a random image on initial load
-                const randomItem = items[Math.floor(Math.random() * items.length)];
-                const initialBg = randomItem.getAttribute('data-background');
+                const randomCard = featureCards[Math.floor(Math.random() * featureCards.length)];
+                const initialBg = randomCard.getAttribute('data-background');
                 if (initialBg) {
-                    backgroundDiv.style.backgroundImage = `url('${initialBg}')`;
-                    backgroundDiv.classList.add('active');
-                    section.classList.add('bg-active');
+                    featureBackground.style.backgroundImage = `url('${initialBg}')`;
+                    featureBackground.classList.add('active');
+                    technologySection.classList.add('bg-active');
                 }
 
                 // Change background on hover
-                items.forEach(item => {
-                    item.addEventListener('mouseenter', () => {
-                        const newBg = item.getAttribute('data-background');
+                featureCards.forEach(card => {
+                    card.addEventListener('mouseenter', () => {
+                        const newBg = card.getAttribute('data-background');
                         if (newBg) {
-                            backgroundDiv.style.backgroundImage = `url('${newBg}')`;
-                            backgroundDiv.classList.add('active');
-                            section.classList.add('bg-active');
+                            featureBackground.style.backgroundImage = `url('${newBg}')`;
+                            featureBackground.classList.add('active');
+                            technologySection.classList.add('bg-active');
                         }
                     });
                 });
-            };
-
-            // --- Setup for Core Technology Section ---
-            setupPersistentBackgrounds('technology', '.feature-card', 'feature-background');
-
-            // --- NEW: Setup for Project Roadmap Section ---
-            setupPersistentBackgrounds('roadmap', '.timeline-item', 'timeline-background');
+            } else {
+                console.error("Missing elements for Core Technology background setup.");
+            }
         });
     </script>
 </body>
