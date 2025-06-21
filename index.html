@@ -425,6 +425,51 @@
         };
         // Listen for scroll events to trigger the fade
         window.addEventListener('scroll', handleBannerFade);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Welcome Banner Logic ---
+            const welcomeBanner = document.getElementById('welcome-banner');
+            // ... (rest of banner logic) ...
+
+            // --- Helper function to manage background overlays ---
+            const setupPersistentBackgrounds = (sectionId, itemSelector, backgroundId) => {
+                const section = document.getElementById(sectionId);
+                const items = document.querySelectorAll(itemSelector);
+                const backgroundDiv = document.getElementById(backgroundId);
+
+                if (!section || items.length === 0 || !backgroundDiv) {
+                    console.error("Missing elements for persistent background setup:", {sectionId, itemSelector, backgroundId});
+                    return;
+                }
+
+                // Show a random image on initial load
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                const initialBg = randomItem.getAttribute('data-background');
+                if (initialBg) {
+                    backgroundDiv.style.backgroundImage = `url('${initialBg}')`;
+                    backgroundDiv.classList.add('active');
+                    section.classList.add('bg-active');
+                }
+
+                // Change background on hover
+                items.forEach(item => {
+                    item.addEventListener('mouseenter', () => {
+                        const newBg = item.getAttribute('data-background');
+                        if (newBg) {
+                            backgroundDiv.style.backgroundImage = `url('${newBg}')`;
+                            backgroundDiv.classList.add('active');
+                            section.classList.add('bg-active');
+                        }
+                    });
+                });
+            };
+
+            // --- Setup for Core Technology Section ---
+            setupPersistentBackgrounds('technology', '.feature-card', 'feature-background');
+
+            // --- NEW: Setup for Project Roadmap Section ---
+            setupPersistentBackgrounds('roadmap', '.timeline-item', 'timeline-background');
+        });
     </script>
 </body>
 </html>

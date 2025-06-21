@@ -39,6 +39,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     opacity: 1;
     transition: opacity 1s ease-out;
     pointer-events: none; /* Let clicks pass through to the canvas */
+    text-align: center; /* This will horizontally center the text */
 }
 
 #welcome-banner h1 {
@@ -52,7 +53,6 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     text-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* Soft, pronounced shadow */
     padding: 1rem;
     margin: 0;
-    text-align: center; /* This will horizontally center the text */
 }
 
 #camera-text-content { 
@@ -78,7 +78,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 
 /* --- Section Styles --- */
 .section-wrapper { position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-size: cover; background-position: center center; background-attachment: fixed; }
-.section-wrapper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(13, 17, 23, 0.85); z-index: 1; }
+.section-wrapper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(13, 17, 23, 0.85); z-index: 1; transition: opacity 0.5s ease; }
 .section-container { max-width: var(--container-width); margin: 0 auto; padding: 6rem 2rem; text-align: center; position: relative; z-index: 2; }
 .section-title { font-size: 3rem; margin-bottom: 3rem; letter-spacing: 2px; }
 
@@ -86,15 +86,24 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 * UPDATED: Reverted to simple background colors to fix 404 errors.
 * When you have images ready, you can change these back to background-image.
 */
-.technology-bg {
+.technology-bg, .roadmap-bg {
     position: relative;
     z-index: 1;
-    overflow: hidden; /* NEW: Contain the background */
+    overflow: hidden; /* Contain the background */
     background-color: var(--background-color);
 }
-.roadmap-bg { background-color: var(--background-color); }
+
+/* ★ UPDATED: Fade out the dark mask when a background is active in either section */
+.technology-bg.bg-active::before,
+.roadmap-bg.bg-active::before {
+    opacity: 0.2;
+}
+
 .team-bg { background-color: var(--background-color); }
-.contact-bg { background: var(--background-color); }
+.contact-bg {
+    background: url('assets/JoinOurMission.png') center/cover fixed
+                var(--background-color);
+}
 
 /* --- All other styles remain the same --- */
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: left; position: relative; z-index: 2; }
@@ -263,30 +272,21 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 }
 
-/* UPDATED: Feature background overlay - positioned behind Core Technology section */
-.feature-background {
+/* ★ UPDATED: Shared styles for both background overlays */
+.feature-background,
+.timeline-background {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 0.5s ease;
-    z-index: 2;
+    z-index: 2; /* Sit above the dark section mask */
     pointer-events: none;
+    filter: brightness(1.35) saturate(1.2); /* Make images pop */
 }
 
-.feature-background.active {
+.feature-background.active,
+.timeline-background.active {
     opacity: 1;
-    filter: brightness(1.35) saturate(1.2);
-    pointer-events: auto;
 }
-
-/* ★ fade-out mask when a tech-card is active */
-.technology-bg::before {
-    transition: opacity 0.3s ease;
-}
-.technology-bg.bg-active::before { opacity: 0.20; }
