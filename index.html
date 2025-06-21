@@ -413,18 +413,17 @@
 
         preloadImages();
 
-        // --- NEW: Welcome Banner Fade Out Logic ---
+        // --- NEW: Re-appearing Welcome Banner Logic ---
         const welcomeBanner = document.getElementById('welcome-banner');
         const handleBannerFade = () => {
-            // Fade out banner after scrolling down a bit
+            // If scrolled more than 50px, fade out. Otherwise, fade in.
             if (window.scrollY > 50) {
                 welcomeBanner.style.opacity = '0';
-                // After the fade transition, hide it completely to improve performance
-                setTimeout(() => { welcomeBanner.style.display = 'none'; }, 1000); // 1s matches CSS transition
-                // Remove the listener after it has done its job
-                window.removeEventListener('scroll', handleBannerFade);
+            } else {
+                welcomeBanner.style.opacity = '1';
             }
         };
+        // Listen for scroll events to trigger the fade
         window.addEventListener('scroll', handleBannerFade);
     </script>
 </body>

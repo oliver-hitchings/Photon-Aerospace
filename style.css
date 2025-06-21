@@ -52,6 +52,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     text-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* Soft, pronounced shadow */
     padding: 1rem;
     margin: 0;
+    text-align: center; /* This will horizontally center the text */
 }
 
 #camera-text-content { 
