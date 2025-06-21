@@ -47,7 +47,6 @@
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
             <div id="technology" class="section-wrapper technology-bg">
-                <!-- ► background overlay now sits inside technology section ◄ -->
                 <div class="feature-background" id="feature-background"></div>
                 
                 <section class="section-container">
@@ -72,34 +71,35 @@
                 </section>
             </div>
             <div id="roadmap" class="section-wrapper roadmap-bg">
+                <div class="timeline-background" id="timeline-background"></div>
                 <section class="section-container">
                     <h2 class="section-title">Project Roadmap</h2>
                     <div class="timeline">
-                        <div class="timeline-item">
+                        <div class="timeline-item" data-background="assets/Research Phase.png">
                             <div class="timeline-content">
                                 <h3>June 2024: Research Phase Initiated</h3>
                                 <p>Commenced foundational research into aerodynamics, materials science, and power systems for perpetual flight.</p>
                             </div>
                         </div>
-                        <div class="timeline-item">
+                        <div class="timeline-item" data-background="assets/Milestone.png">
                             <div class="timeline-content">
                                 <h3>April 2025: Milestone Complete</h3>
                                 <p>Successfully concluded small-scale wing tests and published a comprehensive technical paper on wing design and solar integration.</p>
                             </div>
                         </div>
-                        <div class="timeline-item">
+                        <div class="timeline-item" data-background="assets/Current Phase.png">
                             <div class="timeline-content">
                                 <h3>Current Phase (Q3 2025): Seed Funding</h3>
                                 <p>Actively seeking £500k in seed funding before September to begin full-scale development and prototype procurement.</p>
                             </div>
                         </div>
-                        <div class="timeline-item">
+                        <div class="timeline-item" data-background="assets/Accelerated Development.png">
                             <div class="timeline-content">
                                 <h3>Q4 2025 - Q2 2026: Accelerated Development</h3>
                                 <p>Post-funding phase focused on iterative testing of avionics, power systems, and autonomous flight controls.</p>
                             </div>
                         </div>
-                        <div class="timeline-item">
+                        <div class="timeline-item" data-background="assets/Summer2026.png">
                             <div class="timeline-content">
                                 <h3>Summer 2026: Final Testing & Demos</h3>
                                 <p>Commence final flight validation, endurance testing, and begin live demonstrations for initial customers and defence partners.</p>
@@ -374,31 +374,14 @@
             const featureBackground  = document.getElementById('feature-background');
             const technologySection  = document.getElementById('technology');
 
+            // random default
+            const rndCard = featureCards[Math.floor(Math.random() * featureCards.length)];
+            activateOverlay(technologySection, featureBackground, rndCard.getAttribute('data-background'));
+
             featureCards.forEach(card => {
                 card.addEventListener('mouseenter', () => {
-                    const imgSrc = card.getAttribute('data-background');
-                    if (!imgSrc) return;
-
-                    /* preload / test the image */
-                    const testImg = new Image();
-                    testImg.onload = () => {
-                        featureBackground.style.backgroundImage = `url('${imgSrc}')`;
-                        featureBackground.classList.add('active');
-                        technologySection.classList.add('bg-active');   // dim mask
-                    };
-                    testImg.onerror = () => {
-                        console.error(`Unable to load ${imgSrc}`);
-                        featureBackground.style.background =
-                            'linear-gradient(45deg,var(--primary-color),#0099e6)';
-                        featureBackground.classList.add('active');
-                        technologySection.classList.add('bg-active');
-                    };
-                    testImg.src = imgSrc;
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    featureBackground.classList.remove('active');
-                    technologySection.classList.remove('bg-active');
+                    activateOverlay(technologySection, featureBackground,
+                                    card.getAttribute('data-background'));
                 });
             });
 
@@ -408,6 +391,39 @@
                 technologySection.classList.remove('bg-active');
             });
         });
+
+        // Roadmap timeline hover effects - UPDATED for proper background positioning
+        document.addEventListener('DOMContentLoaded', () => {
+            const items = document.querySelectorAll('#roadmap .timeline-item');
+            const roadmapSection = document.getElementById('roadmap');
+            const timelineBg = document.getElementById('timeline-background');
+
+            // random default
+            const rndItem = items[Math.floor(Math.random() * items.length)];
+            activateOverlay(roadmapSection, timelineBg, rndItem.getAttribute('data-background'));
+
+            items.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    activateOverlay(roadmapSection, timelineBg,
+                                    item.getAttribute('data-background'));
+                });
+            });
+        });
+
+        const technologySection  = document.getElementById('technology');
+        const featureBg          = document.getElementById('feature-background');
+
+        const roadmapSection     = document.getElementById('roadmap');
+        const timelineBg         = document.getElementById('timeline-background');
+
+        /* ---------- helper to activate an overlay ------------------- */
+        function activateOverlay(section, bgDiv, imgSrc) {
+            if (imgSrc) {
+                bgDiv.style.backgroundImage = `url('${imgSrc}')`;
+                bgDiv.classList.add('active');
+                section.classList.add('bg-active');
+            }
+        }
 
         preloadImages();
     </script>
