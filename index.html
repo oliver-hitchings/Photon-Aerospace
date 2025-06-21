@@ -46,6 +46,9 @@
 
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
+            <!-- NEW: Background overlay for feature cards -->
+            <div class="feature-background" id="feature-background"></div>
+            
             <div id="technology" class="section-wrapper technology-bg">
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
@@ -364,24 +367,28 @@
             welcomeBanner.style.opacity = welcomeOpacity;
         }
 
-        // Feature card hover effects
+        // Feature card hover effects - UPDATED for full background
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
+            const featureBackground = document.getElementById('feature-background');
             
             featureCards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
                     const backgroundImage = this.getAttribute('data-background');
                     if (backgroundImage) {
-                        this.style.backgroundImage = `url('${backgroundImage}')`;
-                        this.style.backgroundSize = 'cover';
-                        this.style.backgroundPosition = 'center';
-                        this.style.backgroundRepeat = 'no-repeat';
+                        featureBackground.style.backgroundImage = `url('${backgroundImage}')`;
+                        featureBackground.classList.add('active');
                     }
                 });
                 
                 card.addEventListener('mouseleave', function() {
-                    this.style.backgroundImage = 'none';
+                    featureBackground.classList.remove('active');
                 });
+            });
+            
+            // Close background when clicking outside
+            featureBackground.addEventListener('click', function() {
+                this.classList.remove('active');
             });
         });
 
