@@ -38,10 +38,11 @@
         <div id="scroll-sequence-container">
             <canvas id="image-canvas"></canvas>
             
-            <div id="camera-text-content">
+            <!-- Commented out to test smooth scrolling -->
+            <!-- <div id="camera-text-content">
                 <h2>Modular Payloads for ISTAR</h2>
                 <p>Our drone features a hot-swappable payload bay, allowing for mission-specific customization with high-resolution cameras, signals intelligence packages, and advanced sensor suites.</p>
-            </div>
+            </div> -->
         </div>
 
         <!-- The rest of your website content starts here -->
@@ -160,7 +161,7 @@
         const canvas = document.getElementById('image-canvas');
         const context = canvas.getContext('2d');
         const scrollContainer = document.getElementById('scroll-sequence-container');
-        const cameraText = document.getElementById('camera-text-content');
+        // const cameraText = document.getElementById('camera-text-content'); // No longer needed
 
         // --- CONFIGURATION ---
         const config = {
@@ -168,11 +169,12 @@
             imagePrefix: '',
             imageExtension: '.png',
             frameCount: 210,
-            pauseFrame: 105,
-            pauseStart: 0.45,
-            pauseEnd: 0.55,
-            fadeInDuration: 0.1,
-            fadeOutDuration: 0.15,
+            // --- Pause functionality commented out for smooth scroll test ---
+            // pauseFrame: 105,
+            // pauseStart: 0.45,
+            // pauseEnd: 0.55,
+            // fadeInDuration: 0.1,
+            // fadeOutDuration: 0.15,
             preloadRange: 20,
             mobileFrameSkip: 3,
             isMobile: window.innerWidth <= 768
@@ -280,33 +282,10 @@
             
             scrollFraction = Math.max(0, Math.min(1, scrollFraction));
 
-            let frameIndex;
-            let textOpacity = 0;
-            let textTransform = 'translateY(20px)';
-
-            if (scrollFraction >= config.pauseStart && scrollFraction <= config.pauseEnd) {
-                frameIndex = config.pauseFrame;
-                textOpacity = 1;
-                textTransform = 'translateY(0)';
-            } else if (scrollFraction >= (config.pauseStart - config.fadeInDuration) && scrollFraction < config.pauseStart) {
-                const fadeProgress = (scrollFraction - (config.pauseStart - config.fadeInDuration)) / config.fadeInDuration;
-                frameIndex = Math.floor((config.pauseStart - config.fadeInDuration) * config.frameCount + fadeProgress * config.fadeInDuration * config.frameCount);
-                textOpacity = fadeProgress;
-                textTransform = `translateY(${20 - (fadeProgress * 20)}px)`;
-            } else if (scrollFraction > config.pauseEnd && scrollFraction <= (config.pauseEnd + config.fadeOutDuration)) {
-                const fadeProgress = 1 - ((scrollFraction - config.pauseEnd) / config.fadeOutDuration);
-                frameIndex = Math.floor(config.pauseEnd * config.frameCount + (scrollFraction - config.pauseEnd) * config.frameCount);
-                textOpacity = fadeProgress;
-                textTransform = `translateY(${20 - (fadeProgress * 20)}px)`;
-            } else {
-                let range = 1 - (config.pauseEnd - config.pauseStart);
-                let progress = (scrollFraction < config.pauseStart) ? scrollFraction / config.pauseStart * (config.pauseStart / range) : (scrollFraction - config.pauseEnd) / (1 - config.pauseEnd) * ( (1 - config.pauseEnd) / range ) + (config.pauseStart / range);
-                frameIndex = Math.floor(progress * config.frameCount);
-                textOpacity = 0;
-                textTransform = 'translateY(20px)';
-            }
+            // --- UPDATED: Simplified logic for completely smooth scrolling ---
+            let frameIndex = Math.floor(scrollFraction * (config.frameCount - 1));
             
-            // NEW: Frame skipping for mobile performance
+            // Frame skipping for mobile performance
             if (config.isMobile) {
                 frameIndex = Math.floor(frameIndex / config.mobileFrameSkip) * config.mobileFrameSkip;
             }
@@ -319,7 +298,7 @@
                 
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 if(images[frameIndex] && images[frameIndex].complete) {
-                    // NEW: Mobile-optimized image drawing with cropping
+                    // Mobile-optimized image drawing with cropping
                     if (config.isMobile) {
                         const img = images[frameIndex];
                         const imgAspect = img.width / img.height;
@@ -348,9 +327,7 @@
                 }
             }
 
-            // Update text positions
-            cameraText.style.opacity = textOpacity;
-            cameraText.style.transform = `translate(-20%, -50%) ${textTransform}`;
+            // --- DELETED: All logic for the ISTAR text popup has been removed ---
         }
 
         // Feature card hover effects - UPDATED for proper background positioning
