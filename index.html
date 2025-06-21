@@ -48,7 +48,8 @@
         <!-- The rest of your website content starts here -->
         <div id="rest-of-site">
             <div id="technology" class="section-wrapper technology-bg">
-                <div class="feature-background" id="feature-background"></div>
+                <div class="feature-background" id="feature-background-a"></div>
+                <div class="feature-background" id="feature-background-b"></div>
                 
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
@@ -333,7 +334,7 @@
         // Feature card hover effects - UPDATED for proper background positioning
         document.addEventListener('DOMContentLoaded', () => {
             const featureCards       = document.querySelectorAll('.feature-card');
-            const featureBackground  = document.getElementById('feature-background');
+            const featureBackground  = document.getElementById('feature-background-a');
             const technologySection  = document.getElementById('technology');
 
             // random default
@@ -373,7 +374,7 @@
         });
 
         const technologySection  = document.getElementById('technology');
-        const featureBg          = document.getElementById('feature-background');
+        const featureBg          = document.getElementById('feature-background-a');
 
         const roadmapSection     = document.getElementById('roadmap');
         const timelineBg         = document.getElementById('timeline-background');
@@ -407,18 +408,40 @@
             const welcomeBanner = document.getElementById('welcome-banner');
             // ... (rest of banner logic) ...
 
-            // --- UPDATED: Simplified setup for only the Core Technology Section ---
+            // --- UPDATED: Cross-fade logic for Core Technology Section ---
             const technologySection = document.getElementById('technology');
             const featureCards = document.querySelectorAll('.feature-card');
-            const featureBackground = document.getElementById('feature-background');
+            const bgA = document.getElementById('feature-background-a');
+            const bgB = document.getElementById('feature-background-b');
 
-            if (technologySection && featureCards.length > 0 && featureBackground) {
+            if (technologySection && featureCards.length > 0 && bgA && bgB) {
+                let activeBg = 'a'; // Keep track of which background is currently visible
+
+                // Function to handle the image switch
+                const switchBackground = (newImageUrl) => {
+                    const currentBgDiv = (activeBg === 'a') ? bgA : bgB;
+                    const nextBgDiv = (activeBg === 'a') ? bgB : bgA;
+                    
+                    // Don't do anything if the image is already displayed
+                    if (currentBgDiv.style.backgroundImage.includes(newImageUrl)) {
+                        return;
+                    }
+
+                    // Set the new image on the hidden div and fade it in
+                    nextBgDiv.style.backgroundImage = `url('${newImageUrl}')`;
+                    nextBgDiv.classList.add('active');
+                    currentBgDiv.classList.remove('active');
+                    
+                    // Update the active background tracker
+                    activeBg = (activeBg === 'a') ? 'b' : 'a';
+                };
+
                 // Show a random image on initial load
                 const randomCard = featureCards[Math.floor(Math.random() * featureCards.length)];
                 const initialBg = randomCard.getAttribute('data-background');
                 if (initialBg) {
-                    featureBackground.style.backgroundImage = `url('${initialBg}')`;
-                    featureBackground.classList.add('active');
+                    bgA.style.backgroundImage = `url('${initialBg}')`;
+                    bgA.classList.add('active');
                     technologySection.classList.add('bg-active');
                 }
 
@@ -427,9 +450,7 @@
                     card.addEventListener('mouseenter', () => {
                         const newBg = card.getAttribute('data-background');
                         if (newBg) {
-                            featureBackground.style.backgroundImage = `url('${newBg}')`;
-                            featureBackground.classList.add('active');
-                            technologySection.classList.add('bg-active');
+                            switchBackground(newBg);
                         }
                     });
                 });
