@@ -27,7 +27,51 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /* ================================== */
 #scroll-sequence-container { height: 3000px; position: relative; z-index: 1; }
 #image-canvas { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; }
-#camera-text-content { position: sticky; top: 50%; left: 70%; transform: translate(-30%, -50%); z-index: 5; max-width: 500px; padding: 2rem; color: white; background-color: rgba(13, 17, 23, 0.7); backdrop-filter: blur(10px); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
+
+/* NEW: Welcome banner styles */
+#welcome-banner { 
+    position: sticky; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    z-index: 5; 
+    text-align: center; 
+    opacity: 1; 
+    transition: opacity 0.5s ease; 
+}
+#welcome-banner h1 { 
+    font-size: 4rem; 
+    color: var(--headline-color); 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    background: linear-gradient(45deg, var(--primary-color), #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    padding: 2rem;
+    background-color: rgba(13, 17, 23, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+#camera-text-content { 
+    position: sticky; 
+    top: 50%; 
+    left: 80%; /* UPDATED: Move further to the right */
+    transform: translate(-20%, -50%); /* UPDATED: Adjust transform for right positioning */
+    z-index: 5; 
+    max-width: 500px; 
+    padding: 2rem; 
+    color: white; 
+    background-color: rgba(13, 17, 23, 0.7); 
+    backdrop-filter: blur(10px); 
+    border-radius: 8px; 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    text-align: center; 
+    opacity: 0; 
+    transition: opacity 0.5s ease, transform 0.5s ease; 
+}
 #camera-text-content h2 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); }
 #camera-text-content p { font-size: 1.1rem; line-height: 1.6; }
 #rest-of-site { position: relative; z-index: 10; background-color: var(--background-color); }
@@ -49,8 +93,38 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 
 /* --- All other styles remain the same --- */
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: left; }
-.feature-card { background-color: rgba(22, 27, 34, 0.7); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 2rem; transition: transform 0.3s ease, border-color 0.3s ease; }
-.feature-card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
+.feature-card { 
+    background-color: rgba(22, 27, 34, 0.7); 
+    backdrop-filter: blur(5px); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 8px; 
+    padding: 2rem; 
+    transition: transform 0.3s ease, border-color 0.3s ease, background-image 0.3s ease; 
+    position: relative;
+    overflow: hidden;
+}
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(22, 27, 34, 0.8);
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+.feature-card:hover::before {
+    opacity: 0.3;
+}
+.feature-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--primary-color); 
+}
+.feature-card > * {
+    position: relative;
+    z-index: 2;
+}
 .feature-icon { font-size: 2.5rem; margin-bottom: 1.5rem; }
 .feature-title { font-size: 1.75rem; margin-bottom: 1rem; }
 .feature-description { font-size: 1rem; line-height: 1.6; font-weight: 300; }
@@ -81,7 +155,21 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .advisor-expertise { color: var(--primary-color); font-family: 'Roboto', sans-serif; font-weight: 400; text-transform: none; }
 .contact-section { padding-top: 6rem; padding-bottom: 6rem; }
 .contact-subheading { max-width: 700px; margin: -1rem auto 2.5rem auto; font-size: 1.1rem; line-height: 1.7; font-weight: 300; }
-.hero-button { white-space: nowrap; }
+.hero-button { 
+    display: inline-block;
+    background-color: var(--primary-color); 
+    color: var(--headline-color); 
+    padding: 1rem 2rem; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-weight: 700; 
+    transition: background-color 0.3s ease; 
+    white-space: nowrap; 
+}
+.hero-button:hover { 
+    background-color: #0099e6; 
+    color: var(--headline-color) !important; 
+}
 .footer { text-align: center; padding: 2rem; background-color: #0d1117; }
 .footer p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
 

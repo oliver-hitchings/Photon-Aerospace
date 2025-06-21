@@ -32,6 +32,12 @@
         <!-- ======================= -->
         <div id="scroll-sequence-container">
             <canvas id="image-canvas"></canvas>
+            
+            <!-- NEW: Welcome banner -->
+            <div id="welcome-banner">
+                <h1>Welcome to the Future of Autonomous Flight</h1>
+            </div>
+            
             <div id="camera-text-content">
                 <h2>Modular Payloads for ISTAR</h2>
                 <p>Our drone features a hot-swappable payload bay, allowing for mission-specific customization with high-resolution cameras, signals intelligence packages, and advanced sensor suites.</p>
@@ -44,17 +50,17 @@
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
                     <div class="features-grid">
-                        <div class="feature-card">
+                        <div class="feature-card" data-background="assets/Perpetual Solar Flight.png">
                             <div class="feature-icon">⚡️</div>
                             <h3 class="feature-title">Perpetual Solar Flight</h3>
                             <p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card" data-background="assets/Modular Payload System.png">
                             <div class="feature-icon">📦</div>
                             <h3 class="feature-title">Modular Payload System</h3>
                             <p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card" data-background="assets/AI-Driven Autonomy.png">
                             <div class="feature-icon">🧠</div>
                             <h3 class="feature-title">AI-Driven Autonomy</h3>
                             <p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p>
@@ -137,7 +143,7 @@
                 <section class="section-container contact-section">
                     <h2 class="section-title">Join Our Mission</h2>
                     <p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p>
-                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry" class="hero-button">Investor Relations</a>
+                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver,%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan,%20technical%20reports,%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards," class="hero-button">Investor Relations</a>
                 </section>
             </div>
             <footer class="footer">
@@ -152,6 +158,7 @@
         const context = canvas.getContext('2d');
         const scrollContainer = document.getElementById('scroll-sequence-container');
         const cameraText = document.getElementById('camera-text-content');
+        const welcomeBanner = document.getElementById('welcome-banner');
 
         // --- CONFIGURATION ---
         const config = {
@@ -163,7 +170,10 @@
             pauseStart: 0.45,
             pauseEnd: 0.55,
             fadeInDuration: 0.1,
-            fadeOutDuration: 0.15
+            fadeOutDuration: 0.15,
+            // NEW: Welcome banner fade out timing
+            welcomeFadeStart: 0.1,
+            welcomeFadeEnd: 0.3
         };
         
         // Make canvas responsive
@@ -213,6 +223,15 @@
             let frameIndex;
             let textOpacity = 0;
             let textTransform = 'translateY(20px)';
+            let welcomeOpacity = 1;
+
+            // NEW: Welcome banner fade logic
+            if (scrollFraction >= config.welcomeFadeStart && scrollFraction <= config.welcomeFadeEnd) {
+                const fadeProgress = 1 - ((scrollFraction - config.welcomeFadeStart) / (config.welcomeFadeEnd - config.welcomeFadeStart));
+                welcomeOpacity = fadeProgress;
+            } else if (scrollFraction > config.welcomeFadeEnd) {
+                welcomeOpacity = 0;
+            }
 
             if (scrollFraction >= config.pauseStart && scrollFraction <= config.pauseEnd) {
                 frameIndex = config.pauseFrame;
@@ -243,9 +262,34 @@
                 context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
             }
 
+            // UPDATED: Move popup further to the right
             cameraText.style.opacity = textOpacity;
-            cameraText.style.transform = `translate(-30%, -50%) ${textTransform}`;
+            cameraText.style.transform = `translate(-20%, -50%) ${textTransform}`;
+            
+            // NEW: Update welcome banner opacity
+            welcomeBanner.style.opacity = welcomeOpacity;
         }
+
+        // NEW: Feature card hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const backgroundImage = this.getAttribute('data-background');
+                    if (backgroundImage) {
+                        this.style.backgroundImage = `url('${backgroundImage}')`;
+                        this.style.backgroundSize = 'cover';
+                        this.style.backgroundPosition = 'center';
+                        this.style.backgroundRepeat = 'no-repeat';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.backgroundImage = 'none';
+                });
+            });
+        });
 
         preloadImages();
     </script>
