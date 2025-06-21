@@ -171,15 +171,27 @@
             pauseEnd: 0.55,
             fadeInDuration: 0.1,
             fadeOutDuration: 0.15,
-            // NEW: Welcome banner fade out timing
             welcomeFadeStart: 0.1,
-            welcomeFadeEnd: 0.3
+            welcomeFadeEnd: 0.3,
+            // NEW: Performance settings
+            preloadRange: 20, // Number of images to preload around current frame
+            mobileFrameSkip: 3, // Skip frames on mobile for better performance
+            isMobile: window.innerWidth <= 768
         };
         
-        // Make canvas responsive
+        // Make canvas responsive with mobile optimization
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const isMobile = window.innerWidth <= 768;
+            config.isMobile = isMobile;
+            
+            // Set canvas size based on device
+            if (isMobile) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            } else {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
         }
         
         resizeCanvas();
@@ -187,28 +199,77 @@
         
         const images = [];
         let loadedImages = 0;
-        let frame = { current: 0 };
+        let currentFrame = 0;
+        let isScrolling = false;
+        let scrollTimeout;
 
+        // NEW: Optimized image loading with priority queue
         function preloadImages() {
-            for (let i = 1; i <= config.frameCount; i++) {
-                const img = new Image();
-                const num = i.toString().padStart(4, '0');
-                img.src = `${config.imagePath}${config.imagePrefix}${num}${config.imageExtension}`;
-                
-                img.onload = () => {
-                    loadedImages++;
-                    if (loadedImages === 1) {
-                        // Draw first image immediately when it loads
-                        context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        window.addEventListener('scroll', updateImage);
+            // Load first image immediately
+            loadImage(1, true);
+            
+            // Load images in batches with priority
+            const loadBatch = (start, end, priority = false) => {
+                for (let i = start; i <= end && i <= config.frameCount; i++) {
+                    if (!images[i - 1]) {
+                        loadImage(i, priority);
                     }
-                };
+                }
+            };
+            
+            // Load first batch immediately (frames 2-20)
+            loadBatch(2, 20, true);
+            
+            // Load remaining images in background
+            setTimeout(() => loadBatch(21, config.frameCount), 100);
+        }
+
+        function loadImage(frameNumber, priority = false) {
+            if (images[frameNumber - 1]) return; // Already loaded
+            
+            const img = new Image();
+            const num = frameNumber.toString().padStart(4, '0');
+            img.src = `${config.imagePath}${config.imagePrefix}${num}${config.imageExtension}`;
+            
+            img.onload = () => {
+                loadedImages++;
+                images[frameNumber - 1] = img;
                 
-                img.onerror = () => {
-                    console.error(`Failed to load image: ${img.src}`);
-                };
+                // Draw first image immediately
+                if (loadedImages === 1) {
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    window.addEventListener('scroll', throttledUpdateImage);
+                }
+            };
+            
+            img.onerror = () => {
+                console.error(`Failed to load image: ${img.src}`);
+                // Create a fallback colored rectangle
+                const fallbackCanvas = document.createElement('canvas');
+                fallbackCanvas.width = 1920;
+                fallbackCanvas.height = 1080;
+                const fallbackCtx = fallbackCanvas.getContext('2d');
+                fallbackCtx.fillStyle = '#0d1117';
+                fallbackCtx.fillRect(0, 0, 1920, 1080);
                 
-                images.push(img);
+                const fallbackImg = new Image();
+                fallbackImg.src = fallbackCanvas.toDataURL();
+                fallbackImg.onload = () => {
+                    images[frameNumber - 1] = fallbackImg;
+                    loadedImages++;
+                };
+            };
+        }
+
+        // NEW: Throttled scroll handler for better performance
+        function throttledUpdateImage() {
+            if (!isScrolling) {
+                isScrolling = true;
+                updateImage();
+                
+                scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                }, config.isMobile ? 50 : 16); // 20fps on mobile, 60fps on desktop
             }
         }
 
@@ -225,7 +286,7 @@
             let textTransform = 'translateY(20px)';
             let welcomeOpacity = 1;
 
-            // NEW: Welcome banner fade logic
+            // Welcome banner fade logic
             if (scrollFraction >= config.welcomeFadeStart && scrollFraction <= config.welcomeFadeEnd) {
                 const fadeProgress = 1 - ((scrollFraction - config.welcomeFadeStart) / (config.welcomeFadeEnd - config.welcomeFadeStart));
                 welcomeOpacity = fadeProgress;
@@ -255,22 +316,55 @@
                 textTransform = 'translateY(20px)';
             }
             
+            // NEW: Frame skipping for mobile performance
+            if (config.isMobile) {
+                frameIndex = Math.floor(frameIndex / config.mobileFrameSkip) * config.mobileFrameSkip;
+            }
+            
             frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
 
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            if(images[frameIndex] && images[frameIndex].complete) {
-                context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+            // Only update if frame changed
+            if (frameIndex !== currentFrame) {
+                currentFrame = frameIndex;
+                
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                if(images[frameIndex] && images[frameIndex].complete) {
+                    // NEW: Mobile-optimized image drawing with cropping
+                    if (config.isMobile) {
+                        const img = images[frameIndex];
+                        const imgAspect = img.width / img.height;
+                        const canvasAspect = canvas.width / canvas.height;
+                        
+                        let sx, sy, sWidth, sHeight;
+                        
+                        if (imgAspect > canvasAspect) {
+                            // Image is wider than canvas - crop sides
+                            sHeight = img.height;
+                            sWidth = img.height * canvasAspect;
+                            sx = (img.width - sWidth) / 2;
+                            sy = 0;
+                        } else {
+                            // Image is taller than canvas - crop top/bottom
+                            sWidth = img.width;
+                            sHeight = img.width / canvasAspect;
+                            sx = 0;
+                            sy = (img.height - sHeight) / 2;
+                        }
+                        
+                        context.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+                    } else {
+                        context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+                    }
+                }
             }
 
-            // UPDATED: Move popup further to the right
+            // Update text positions
             cameraText.style.opacity = textOpacity;
             cameraText.style.transform = `translate(-20%, -50%) ${textTransform}`;
-            
-            // NEW: Update welcome banner opacity
             welcomeBanner.style.opacity = welcomeOpacity;
         }
 
-        // NEW: Feature card hover effects
+        // Feature card hover effects
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
             
