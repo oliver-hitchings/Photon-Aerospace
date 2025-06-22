@@ -165,6 +165,7 @@
 
     <!-- The JavaScript that runs the animation -->
     <script>
+        // --- Core Elements ---
         const canvas = document.getElementById('image-canvas');
         const context = canvas.getContext('2d');
         const scrollContainer = document.getElementById('scroll-sequence-container');
@@ -174,146 +175,103 @@
         const config = {
             imagePath: 'sequence/',
             imagePrefix: '',
-            imageExtension: 'png',
+            imageExtension: 'png', // Correctly set to PNG
             frameCount: 210,
-            // --- Pause functionality commented out for smooth scroll test ---
-            // pauseFrame: 105,
-            // pauseStart: 0.45,
-            // pauseEnd: 0.55,
-            // fadeInDuration: 0.1,
-            // fadeOutDuration: 0.15,
-            preloadRange: 20,
             mobileFrameSkip: 3,
             isMobile: window.innerWidth <= 768,
-            loadingThreshold: 5 // Keep this low for a fast initial interaction
+            loadingThreshold: 10 // Hide loader once the first 10 images are ready
         };
         
-        // Make canvas responsive with mobile optimization
+        // --- Responsive Canvas ---
         function resizeCanvas() {
-            const isMobile = window.innerWidth <= 768;
-            config.isMobile = isMobile;
-            
-            // Set canvas size based on device
-            if (isMobile) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            } else {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            config.isMobile = window.innerWidth <= 768;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Redraw the current frame on resize to prevent a blank canvas
+            if (images[currentFrame] && images[currentFrame].complete) {
+                drawFrame(currentFrame);
             }
         }
-        
-        resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         
+        // --- Image Loading ---
         const images = [];
         let loadedImages = 0;
         let currentFrame = 0;
+
+        // Failsafe: Hide the loading screen after 6 seconds, no matter what
+        const loadingTimeout = setTimeout(() => {
+            console.warn("Loading screen timed out.");
+            loadingScreen.classList.add('hidden');
+        }, 6000);
+
+        function preloadImages() {
+            for (let i = 1; i <= config.frameCount; i++) {
+                const img = new Image();
+                const num = i.toString().padStart(4, '0');
+                img.src = `${config.imagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
+                
+                img.onload = () => {
+                    loadedImages++;
+                    images[i - 1] = img;
+                    
+                    // When the very first image loads, draw it and activate the animation
+                    if (loadedImages === 1) {
+                        drawFrame(0); // Draw the first frame
+                        window.addEventListener('scroll', throttledUpdateImage);
+                    }
+                    
+                    // Once we've loaded enough images, hide the loading screen
+                    if (loadedImages === config.loadingThreshold) {
+                        clearTimeout(loadingTimeout); // Cancel the failsafe
+                        loadingScreen.classList.add('hidden');
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.error(`Failed to load image: ${img.src}. Please check the file path and extension.`);
+                    // Mark as loaded to not block the process, but the frame will be blank
+                    loadedImages++;
+                };
+            }
+        }
+
+        // --- Animation & Drawing ---
         let isScrolling = false;
         let scrollTimeout;
 
-        // --- REBUILT: Loading Screen Logic with a 5-second Max Timeout ---
-        let loadingScreenHidden = false;
-        const hideLoadingScreen = () => {
-            if (loadingScreenHidden) return; // Prevent this from running more than once
-            loadingScreenHidden = true;
-            loadingScreen.classList.add('hidden');
-        };
-
-        // This promise resolves when enough images are loaded
-        const imagesReadyPromise = new Promise(resolve => {
-            window.resolveImagesReady = resolve; // Expose resolver globally to be called from loadImage
-        });
-
-        // This promise resolves after 5 seconds, no matter what
-        const maxWaitPromise = new Promise(resolve => {
-            setTimeout(() => {
-                console.warn("Loading fallback triggered: Hiding loader due to 5-second timeout.");
-                resolve('timeout');
-            }, 5000);
-        });
-
-        // Hide the loader as soon as either the images are ready OR 5 seconds have passed
-        Promise.race([imagesReadyPromise, maxWaitPromise]).then(hideLoadingScreen);
-
-        // Optimized image loading with priority queue
-        function preloadImages() {
-            // Load first image immediately
-            loadImage(1, true);
-            
-            // Load images in batches with priority
-            const loadBatch = (start, end, priority = false) => {
-                for (let i = start; i <= end && i <= config.frameCount; i++) {
-                    if (!images[i - 1]) {
-                        loadImage(i, priority);
-                    }
-                }
-            };
-            
-            // UPDATED: Load a larger initial batch to ensure the first scroll is smooth
-            loadBatch(2, 30, true);
-            
-            // Load remaining images in background
-            setTimeout(() => loadBatch(31, config.frameCount), 100);
-        }
-
-        function loadImage(frameNumber, priority = false) {
-            if (images[frameNumber - 1]) return; // Already loaded
-            
-            const img = new Image();
-            const num = frameNumber.toString().padStart(4, '0');
-            img.src = `${config.imagePath}${config.imagePrefix}${num}${config.imageExtension}`;
-            
-            img.onload = () => {
-                loadedImages++;
-                images[frameNumber - 1] = img;
-                
-                // Draw first image immediately
-                if (loadedImages === 1) {
-                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    window.addEventListener('scroll', throttledUpdateImage);
-                }
-
-                // Check if we've loaded enough images to resolve the promise
-                if (loadedImages >= config.loadingThreshold && window.resolveImagesReady) {
-                    window.resolveImagesReady('images loaded');
-                    delete window.resolveImagesReady; // Clean up resolver
-                }
-            };
-            
-            img.onerror = () => {
-                console.error(`Failed to load image: ${img.src}`);
-                // Create a fallback colored rectangle
-                const fallbackCanvas = document.createElement('canvas');
-                fallbackCanvas.width = 1920;
-                fallbackCanvas.height = 1080;
-                const fallbackCtx = fallbackCanvas.getContext('2d');
-                fallbackCtx.fillStyle = '#0d1117';
-                fallbackCtx.fillRect(0, 0, 1920, 1080);
-                
-                const fallbackImg = new Image();
-                fallbackImg.src = fallbackCanvas.toDataURL();
-                fallbackImg.onload = () => {
-                    images[frameNumber - 1] = fallbackImg;
-                    loadedImages++;
-                    // Also check on error
-                    if (loadedImages >= config.loadingThreshold && window.resolveImagesReady) {
-                        window.resolveImagesReady('images loaded on error');
-                        delete window.resolveImagesReady; // Clean up resolver
-                    }
-                };
-            };
-        }
-
-        // NEW: Throttled scroll handler for better performance
         function throttledUpdateImage() {
             if (!isScrolling) {
-                isScrolling = true;
-                updateImage();
-                
-                scrollTimeout = setTimeout(() => {
+                requestAnimationFrame(() => {
+                    updateImage();
                     isScrolling = false;
-                }, config.isMobile ? 50 : 16); // 20fps on mobile, 60fps on desktop
+                });
+                isScrolling = true;
+            }
+        }
+
+        function drawFrame(frameIndex) {
+            const img = images[frameIndex];
+            if (!img || !img.complete) return;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Handle mobile cropping
+            if (config.isMobile) {
+                const imgAspect = img.width / img.height;
+                const canvasAspect = canvas.width / canvas.height;
+                let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+                
+                if (imgAspect > canvasAspect) {
+                    sWidth = img.height * canvasAspect;
+                    sx = (img.width - sWidth) / 2;
+                } else {
+                    sHeight = img.width / canvasAspect;
+                    sy = (img.height - sHeight) / 2;
+                }
+                context.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+            } else {
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
             }
         }
 
@@ -321,164 +279,49 @@
             const rect = scrollContainer.getBoundingClientRect();
             const scrollTop = -rect.top;
             const maxScrollTop = scrollContainer.scrollHeight - window.innerHeight;
-            let scrollFraction = scrollTop / maxScrollTop;
+            let scrollFraction = Math.max(0, Math.min(1, scrollTop / maxScrollTop));
             
-            scrollFraction = Math.max(0, Math.min(1, scrollFraction));
-
-            // --- UPDATED: Simplified logic for completely smooth scrolling ---
             let frameIndex = Math.floor(scrollFraction * (config.frameCount - 1));
             
-            // Frame skipping for mobile performance
             if (config.isMobile) {
                 frameIndex = Math.floor(frameIndex / config.mobileFrameSkip) * config.mobileFrameSkip;
             }
             
             frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
 
-            // Only update if frame changed
             if (frameIndex !== currentFrame) {
                 currentFrame = frameIndex;
-                
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                if(images[frameIndex] && images[frameIndex].complete) {
-                    // Mobile-optimized image drawing with cropping
-                    if (config.isMobile) {
-                        const img = images[frameIndex];
-                        const imgAspect = img.width / img.height;
-                        const canvasAspect = canvas.width / canvas.height;
-                        
-                        let sx, sy, sWidth, sHeight;
-                        
-                        if (imgAspect > canvasAspect) {
-                            // Image is wider than canvas - crop sides
-                            sHeight = img.height;
-                            sWidth = img.height * canvasAspect;
-                            sx = (img.width - sWidth) / 2;
-                            sy = 0;
-                        } else {
-                            // Image is taller than canvas - crop top/bottom
-                            sWidth = img.width;
-                            sHeight = img.width / canvasAspect;
-                            sx = 0;
-                            sy = (img.height - sHeight) / 2;
-                        }
-                        
-                        context.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-                    } else {
-                        context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
-                    }
-                }
-            }
-
-            // --- DELETED: All logic for the ISTAR text popup has been removed ---
-        }
-
-        // Feature card hover effects - UPDATED for proper background positioning
-        document.addEventListener('DOMContentLoaded', () => {
-            const featureCards       = document.querySelectorAll('.feature-card');
-            const featureBackground  = document.getElementById('feature-background-a');
-            const technologySection  = document.getElementById('technology');
-
-            // random default
-            const rndCard = featureCards[Math.floor(Math.random() * featureCards.length)];
-            activateOverlay(technologySection, featureBackground, rndCard.getAttribute('data-background'));
-
-            featureCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    activateOverlay(technologySection, featureBackground,
-                                    card.getAttribute('data-background'));
-                });
-            });
-
-            /* click anywhere on the overlay to close */
-            featureBackground.addEventListener('click', () => {
-                featureBackground.classList.remove('active');
-                technologySection.classList.remove('bg-active');
-            });
-        });
-
-        // Roadmap timeline hover effects - UPDATED for proper background positioning
-        document.addEventListener('DOMContentLoaded', () => {
-            const items = document.querySelectorAll('#roadmap .timeline-item');
-            const roadmapSection = document.getElementById('roadmap');
-            const timelineBg = document.getElementById('timeline-background');
-
-            // random default
-            const rndItem = items[Math.floor(Math.random() * items.length)];
-            activateOverlay(roadmapSection, timelineBg, rndItem.getAttribute('data-background'));
-
-            items.forEach(item => {
-                item.addEventListener('mouseenter', () => {
-                    activateOverlay(roadmapSection, timelineBg,
-                                    item.getAttribute('data-background'));
-                });
-            });
-        });
-
-        const technologySection  = document.getElementById('technology');
-        const featureBg          = document.getElementById('feature-background-a');
-
-        const roadmapSection     = document.getElementById('roadmap');
-        const timelineBg         = document.getElementById('timeline-background');
-
-        /* ---------- helper to activate an overlay ------------------- */
-        function activateOverlay(section, bgDiv, imgSrc) {
-            if (imgSrc) {
-                bgDiv.style.backgroundImage = `url('${imgSrc}')`;
-                bgDiv.classList.add('active');
-                section.classList.add('bg-active');
+                drawFrame(frameIndex);
             }
         }
 
-        preloadImages();
-
-        // --- NEW: Re-appearing Welcome Banner Logic ---
-        const welcomeBanner = document.getElementById('welcome-banner');
-        const handleBannerFade = () => {
-            // If scrolled more than 50px, fade out. Otherwise, fade in.
-            if (window.scrollY > 50) {
-                welcomeBanner.style.opacity = '0';
-            } else {
-                welcomeBanner.style.opacity = '1';
-            }
-        };
-        // Listen for scroll events to trigger the fade
-        window.addEventListener('scroll', handleBannerFade);
-
+        // --- Initialize Everything ---
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Welcome Banner Logic ---
             const welcomeBanner = document.getElementById('welcome-banner');
-            // ... (rest of banner logic) ...
+            const handleBannerFade = () => {
+                welcomeBanner.style.opacity = (window.scrollY > 50) ? '0' : '1';
+            };
+            window.addEventListener('scroll', handleBannerFade);
 
-            // --- UPDATED: Cross-fade logic for Core Technology Section ---
             const technologySection = document.getElementById('technology');
             const featureCards = document.querySelectorAll('.feature-card');
             const bgA = document.getElementById('feature-background-a');
             const bgB = document.getElementById('feature-background-b');
 
             if (technologySection && featureCards.length > 0 && bgA && bgB) {
-                let activeBg = 'a'; // Keep track of which background is currently visible
-
-                // Function to handle the image switch
+                let activeBg = 'a';
                 const switchBackground = (newImageUrl) => {
+                    if (!newImageUrl) return;
                     const currentBgDiv = (activeBg === 'a') ? bgA : bgB;
-                    const nextBgDiv = (activeBg === 'a') ? bgB : bgA;
+                    if (currentBgDiv.style.backgroundImage.includes(newImageUrl)) return;
                     
-                    // Don't do anything if the image is already displayed
-                    if (currentBgDiv.style.backgroundImage.includes(newImageUrl)) {
-                        return;
-                    }
-
-                    // Set the new image on the hidden div and fade it in
+                    const nextBgDiv = (activeBg === 'a') ? bgB : bgA;
                     nextBgDiv.style.backgroundImage = `url('${newImageUrl}')`;
                     nextBgDiv.classList.add('active');
                     currentBgDiv.classList.remove('active');
-                    
-                    // Update the active background tracker
                     activeBg = (activeBg === 'a') ? 'b' : 'a';
                 };
 
-                // Show a random image on initial load
                 const randomCard = featureCards[Math.floor(Math.random() * featureCards.length)];
                 const initialBg = randomCard.getAttribute('data-background');
                 if (initialBg) {
@@ -487,19 +330,15 @@
                     technologySection.classList.add('bg-active');
                 }
 
-                // Change background on hover
                 featureCards.forEach(card => {
-                    card.addEventListener('mouseenter', () => {
-                        const newBg = card.getAttribute('data-background');
-                        if (newBg) {
-                            switchBackground(newBg);
-                        }
-                    });
+                    card.addEventListener('mouseenter', () => switchBackground(card.getAttribute('data-background')));
                 });
-            } else {
-                console.error("Missing elements for Core Technology background setup.");
             }
         });
+        
+        // --- Start Loading ---
+        resizeCanvas();
+        preloadImages();
     </script>
 </body>
 </html>
