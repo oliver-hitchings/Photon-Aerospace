@@ -174,7 +174,7 @@
         const config = {
             imagePath: 'sequence/',
             imagePrefix: '',
-            imageExtension: '.png',
+            imageExtension: 'webp',
             frameCount: 210,
             // --- Pause functionality commented out for smooth scroll test ---
             // pauseFrame: 105,
@@ -185,7 +185,7 @@
             preloadRange: 20,
             mobileFrameSkip: 3,
             isMobile: window.innerWidth <= 768,
-            loadingThreshold: 5 // UPDATED: Lowered from 20 for a faster perceived load time
+            loadingThreshold: 5 // Keep this low for a fast initial interaction
         };
         
         // Make canvas responsive with mobile optimization
@@ -250,11 +250,11 @@
                 }
             };
             
-            // UPDATED: Load a smaller initial batch for a faster start
-            loadBatch(2, 10, true);
+            // UPDATED: Load a larger initial batch to ensure the first scroll is smooth
+            loadBatch(2, 30, true);
             
             // Load remaining images in background
-            setTimeout(() => loadBatch(11, config.frameCount), 100);
+            setTimeout(() => loadBatch(31, config.frameCount), 100);
         }
 
         function loadImage(frameNumber, priority = false) {
