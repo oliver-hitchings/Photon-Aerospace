@@ -464,3 +464,160 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
         font-size: 0.9rem;
     }
 }
+
+/* --- NEW: Carousel Styles --- */
+.features-carousel {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.feature-card { 
+    min-width: 350px;
+    flex: 1;
+    background-color: rgba(22, 27, 34, 0.7); 
+    backdrop-filter: blur(5px); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 12px; 
+    padding: 2.5rem; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+    cursor: pointer;
+    transform: scale(1);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(22, 27, 34, 0.8);
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+    box-shadow: 0 20px 40px rgba(0, 170, 255, 0.2);
+    z-index: 10;
+}
+
+.feature-card:hover::before {
+    opacity: 0.3;
+}
+
+.feature-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-icon { 
+    font-size: 3rem; 
+    margin-bottom: 1.5rem; 
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+.feature-title { 
+    font-size: 1.75rem; 
+    margin-bottom: 1rem; 
+    transition: color 0.3s ease;
+}
+
+.feature-card:hover .feature-title {
+    color: var(--primary-color);
+}
+
+.feature-description { 
+    font-size: 1rem; 
+    line-height: 1.6; 
+    font-weight: 300; 
+}
+
+/* Carousel Navigation */
+.carousel-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.carousel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.carousel-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* Mobile responsiveness for carousel */
+@media (max-width: 768px) {
+    .carousel-track {
+        gap: 1rem;
+    }
+    
+    .feature-card {
+        min-width: 280px;
+        padding: 2rem;
+    }
+    
+    .carousel-nav {
+        gap: 1rem;
+    }
+    
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}

@@ -59,21 +59,40 @@
                 
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
-                    <div class="features-grid">
-                        <div class="feature-card" data-background="assets/Perpetual Solar Flight.png">
-                            <div class="feature-icon">⚡️</div>
-                            <h3 class="feature-title">Perpetual Solar Flight</h3>
-                            <p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p>
+                    
+                    <!-- NEW: Carousel container -->
+                    <div class="features-carousel">
+                        <div class="carousel-track">
+                            <div class="feature-card" data-background="assets/Perpetual Solar Flight.png">
+                                <div class="feature-icon">⚡️</div>
+                                <h3 class="feature-title">Perpetual Solar Flight</h3>
+                                <p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p>
+                            </div>
+                            <div class="feature-card" data-background="assets/Modular Payload System.png">
+                                <div class="feature-icon">📦</div>
+                                <h3 class="feature-title">Modular Payload System</h3>
+                                <p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p>
+                            </div>
+                            <div class="feature-card" data-background="assets/AI-Driven Autonomy.png">
+                                <div class="feature-icon">🧠</div>
+                                <h3 class="feature-title">AI-Driven Autonomy</h3>
+                                <p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p>
+                            </div>
                         </div>
-                        <div class="feature-card" data-background="assets/Modular Payload System.png">
-                            <div class="feature-icon">📦</div>
-                            <h3 class="feature-title">Modular Payload System</h3>
-                            <p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p>
-                        </div>
-                        <div class="feature-card" data-background="assets/AI-Driven Autonomy.png">
-                            <div class="feature-icon">🧠</div>
-                            <h3 class="feature-title">AI-Driven Autonomy</h3>
-                            <p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p>
+                        
+                        <!-- Carousel navigation -->
+                        <div class="carousel-nav">
+                            <button class="carousel-btn prev-btn" onclick="scrollCarousel('prev')">
+                                <span>‹</span>
+                            </button>
+                            <div class="carousel-dots">
+                                <span class="dot active" onclick="goToSlide(0)"></span>
+                                <span class="dot" onclick="goToSlide(1)"></span>
+                                <span class="dot" onclick="goToSlide(2)"></span>
+                            </div>
+                            <button class="carousel-btn next-btn" onclick="scrollCarousel('next')">
+                                <span>›</span>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -380,6 +399,42 @@
                 welcomeBanner.style.opacity = (window.scrollY > 50) ? '0' : '1';
             };
             window.addEventListener('scroll', handleBannerFade);
+
+            // NEW: Carousel functionality
+            let currentSlide = 0;
+            const track = document.querySelector('.carousel-track');
+            const cards = document.querySelectorAll('.feature-card');
+            const dots = document.querySelectorAll('.dot');
+            const totalSlides = cards.length;
+
+            window.scrollCarousel = function(direction) {
+                if (direction === 'next') {
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                } else {
+                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                }
+                updateCarousel();
+            };
+
+            window.goToSlide = function(slideIndex) {
+                currentSlide = slideIndex;
+                updateCarousel();
+            };
+
+            function updateCarousel() {
+                const cardWidth = cards[0].offsetWidth + 32; // Include gap
+                track.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
+                
+                // Update dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlide);
+                });
+            }
+
+            // Auto-advance carousel every 5 seconds
+            setInterval(() => {
+                scrollCarousel('next');
+            }, 5000);
 
             // NEW: Email handling functions
             window.handleEmailClick = function(event) {
