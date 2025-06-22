@@ -465,159 +465,173 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 }
 
-/* --- NEW: Carousel Styles --- */
-.features-carousel {
+/* --- NEW: Infinite Scrolling Carousel Styles --- */
+.infinite-carousel {
     position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
     overflow: hidden;
+    margin: 2rem 0;
 }
 
-.carousel-track {
+.carousel-container {
     display: flex;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    gap: 2rem;
-    padding: 1rem 0;
+    animation: scroll 30s linear infinite;
+    width: max-content;
 }
 
-.feature-card { 
-    min-width: 350px;
-    flex: 1;
-    background-color: rgba(22, 27, 34, 0.7); 
-    backdrop-filter: blur(5px); 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    border-radius: 12px; 
-    padding: 2.5rem; 
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+.carousel-container:hover {
+    animation-play-state: paused;
+}
+
+.carousel-set {
+    display: flex;
+    gap: 3rem;
+    padding: 2rem 0;
+}
+
+.tech-card {
+    min-width: 500px;
+    max-width: 600px;
+    background: rgba(22, 27, 34, 0.9);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 3rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    z-index: 2;
     cursor: pointer;
     transform: scale(1);
 }
 
-.feature-card::before {
+.tech-card::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(22, 27, 34, 0.8);
-    z-index: 1;
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 170, 255, 0.05));
+    opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: 1;
 }
 
-.feature-card:hover {
-    transform: scale(1.05);
+.tech-card:hover {
+    transform: scale(1.02);
     border-color: var(--primary-color);
-    box-shadow: 0 20px 40px rgba(0, 170, 255, 0.2);
-    z-index: 10;
+    box-shadow: 0 25px 50px rgba(0, 170, 255, 0.3);
 }
 
-.feature-card:hover::before {
-    opacity: 0.3;
+.tech-card:hover::before {
+    opacity: 1;
 }
 
-.feature-card > * {
+.tech-content {
     position: relative;
     z-index: 2;
 }
 
-.feature-icon { 
-    font-size: 3rem; 
-    margin-bottom: 1.5rem; 
+.tech-icon {
+    font-size: 4rem;
+    margin-bottom: 2rem;
     transition: transform 0.3s ease;
+    display: block;
 }
 
-.feature-card:hover .feature-icon {
-    transform: scale(1.1);
+.tech-card:hover .tech-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
-.feature-title { 
-    font-size: 1.75rem; 
-    margin-bottom: 1rem; 
+.tech-title {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--headline-color);
+    font-weight: 700;
+    letter-spacing: 1px;
     transition: color 0.3s ease;
 }
 
-.feature-card:hover .feature-title {
+.tech-card:hover .tech-title {
     color: var(--primary-color);
 }
 
-.feature-description { 
-    font-size: 1rem; 
-    line-height: 1.6; 
-    font-weight: 300; 
+.tech-description {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-weight: 300;
+    color: var(--text-color);
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
 }
 
-/* Carousel Navigation */
-.carousel-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 2rem;
+.tech-card:hover .tech-description {
+    opacity: 1;
 }
 
-.carousel-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
+/* Infinite scroll animation */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-.carousel-btn:hover {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    transform: scale(1.1);
+/* Progressive text reveal effect */
+.tech-card {
+    opacity: 0.7;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
 }
 
-.carousel-dots {
-    display: flex;
-    gap: 0.5rem;
+.tech-card.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: var(--primary-color);
-    transform: scale(1.2);
-}
-
-/* Mobile responsiveness for carousel */
+/* Mobile responsiveness for infinite carousel */
 @media (max-width: 768px) {
-    .carousel-track {
-        gap: 1rem;
+    .carousel-set {
+        gap: 2rem;
+        padding: 1rem 0;
     }
     
-    .feature-card {
-        min-width: 280px;
+    .tech-card {
+        min-width: 350px;
+        max-width: 400px;
         padding: 2rem;
     }
     
-    .carousel-nav {
-        gap: 1rem;
+    .tech-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
     }
     
-    .carousel-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
+    .tech-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
     }
+    
+    .tech-description {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    /* Slower animation on mobile for better performance */
+    .carousel-container {
+        animation-duration: 45s;
+    }
+}
+
+/* Remove old carousel styles */
+.features-carousel,
+.carousel-track,
+.feature-card,
+.carousel-nav,
+.carousel-btn,
+.carousel-dots,
+.dot {
+    display: none;
 }

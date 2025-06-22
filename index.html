@@ -60,39 +60,58 @@
                 <section class="section-container">
                     <h2 class="section-title">Core Technology</h2>
                     
-                    <!-- NEW: Carousel container -->
-                    <div class="features-carousel">
-                        <div class="carousel-track">
-                            <div class="feature-card" data-background="assets/Perpetual Solar Flight.png">
-                                <div class="feature-icon">⚡️</div>
-                                <h3 class="feature-title">Perpetual Solar Flight</h3>
-                                <p class="feature-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun.</p>
+                    <!-- NEW: Infinite scrolling carousel -->
+                    <div class="infinite-carousel">
+                        <div class="carousel-container">
+                            <!-- First set of cards -->
+                            <div class="carousel-set">
+                                <div class="tech-card" data-background="assets/Perpetual Solar Flight.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">⚡️</div>
+                                        <h3 class="tech-title">Perpetual Solar Flight</h3>
+                                        <p class="tech-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun. Our proprietary solar integration system achieves unprecedented efficiency, allowing continuous operation day and night through intelligent power management.</p>
+                                    </div>
+                                </div>
+                                <div class="tech-card" data-background="assets/Modular Payload System.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">📦</div>
+                                        <h3 class="tech-title">Modular Payload System</h3>
+                                        <p class="tech-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission. The modular design enables rapid reconfiguration for different operational requirements, from surveillance to communications relay.</p>
+                                    </div>
+                                </div>
+                                <div class="tech-card" data-background="assets/AI-Driven Autonomy.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">🧠</div>
+                                        <h3 class="tech-title">AI-Driven Autonomy</h3>
+                                        <p class="tech-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking. The system learns and adapts to changing conditions, making real-time decisions for optimal performance and safety.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="feature-card" data-background="assets/Modular Payload System.png">
-                                <div class="feature-icon">📦</div>
-                                <h3 class="feature-title">Modular Payload System</h3>
-                                <p class="feature-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission.</p>
+                            
+                            <!-- Duplicate set for infinite scroll -->
+                            <div class="carousel-set">
+                                <div class="tech-card" data-background="assets/Perpetual Solar Flight.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">⚡️</div>
+                                        <h3 class="tech-title">Perpetual Solar Flight</h3>
+                                        <p class="tech-description">Advanced photovoltaic cells integrated into a 6-meter wingspan, coupled with hyper-efficient battery storage, enable indefinite flight endurance powered solely by the sun. Our proprietary solar integration system achieves unprecedented efficiency, allowing continuous operation day and night through intelligent power management.</p>
+                                    </div>
+                                </div>
+                                <div class="tech-card" data-background="assets/Modular Payload System.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">📦</div>
+                                        <h3 class="tech-title">Modular Payload System</h3>
+                                        <p class="tech-description">A versatile bay allows for hot-swappable sensor packages, from high-resolution optical cameras to advanced signals intelligence (SIGINT) equipment, tailoring the drone to any mission. The modular design enables rapid reconfiguration for different operational requirements, from surveillance to communications relay.</p>
+                                    </div>
+                                </div>
+                                <div class="tech-card" data-background="assets/AI-Driven Autonomy.png">
+                                    <div class="tech-content">
+                                        <div class="tech-icon">🧠</div>
+                                        <h3 class="tech-title">AI-Driven Autonomy</h3>
+                                        <p class="tech-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking. The system learns and adapts to changing conditions, making real-time decisions for optimal performance and safety.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="feature-card" data-background="assets/AI-Driven Autonomy.png">
-                                <div class="feature-icon">🧠</div>
-                                <h3 class="feature-title">AI-Driven Autonomy</h3>
-                                <p class="feature-description">On-board processing with our proprietary AI flight controller ensures fully autonomous operation, from navigation and obstacle avoidance to dynamic mission re-tasking.</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Carousel navigation -->
-                        <div class="carousel-nav">
-                            <button class="carousel-btn prev-btn" onclick="scrollCarousel('prev')">
-                                <span>‹</span>
-                            </button>
-                            <div class="carousel-dots">
-                                <span class="dot active" onclick="goToSlide(0)"></span>
-                                <span class="dot" onclick="goToSlide(1)"></span>
-                                <span class="dot" onclick="goToSlide(2)"></span>
-                            </div>
-                            <button class="carousel-btn next-btn" onclick="scrollCarousel('next')">
-                                <span>›</span>
-                            </button>
                         </div>
                     </div>
                 </section>
@@ -435,6 +454,37 @@
             setInterval(() => {
                 scrollCarousel('next');
             }, 5000);
+
+            // NEW: Infinite carousel functionality
+            const techCards = document.querySelectorAll('.tech-card');
+            
+            // Progressive reveal effect
+            const observerOptions = {
+                threshold: 0.3,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            techCards.forEach(card => {
+                cardObserver.observe(card);
+            });
+            
+            // Background image switching for tech cards
+            techCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    const backgroundImage = card.getAttribute('data-background');
+                    if (backgroundImage) {
+                        switchBackground(backgroundImage);
+                    }
+                });
+            });
 
             // NEW: Email handling functions
             window.handleEmailClick = function(event) {
