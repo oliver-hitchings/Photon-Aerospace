@@ -65,9 +65,25 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .nav-links a { color: var(--text-color); text-decoration: none; margin-left: 1.5rem; font-weight: 300; transition: color 0.3s ease; }
 .nav-links a:hover { color: var(--primary-color); }
 
-/* UPDATED: Made selectors more specific to override general link styles */
-.nav-links .nav-button { background-color: var(--primary-color); color: var(--headline-color); padding: 0.5rem 1rem; border-radius: 5px; font-weight: 700; text-decoration: none; }
-.nav-links .nav-button:hover { background-color: #0099e6; color: var(--headline-color) !important; }
+/* FIXED: Much more specific selectors to ensure button works on all devices */
+.navbar .nav-container .nav-links .nav-button { 
+    background-color: var(--primary-color) !important; 
+    color: var(--headline-color) !important; 
+    padding: 0.5rem 1rem; 
+    border-radius: 5px; 
+    font-weight: 700; 
+    text-decoration: none !important; 
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.navbar .nav-container .nav-links .nav-button:hover { 
+    background-color: #0099e6 !important; 
+    color: var(--headline-color) !important; 
+    text-decoration: none !important;
+}
 
 .nav-toggle, .nav-toggle-label { display: none; }
 
