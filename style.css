@@ -236,23 +236,59 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .advisor-expertise { color: var(--primary-color); font-family: 'Roboto', sans-serif; font-weight: 400; text-transform: none; }
 .contact-section { padding-top: 6rem; padding-bottom: 6rem; }
 .contact-subheading { max-width: 700px; margin: -1rem auto 2.5rem auto; font-size: 1.1rem; line-height: 1.7; font-weight: 300; }
-.hero-button { 
-    display: inline-block;
+.contact-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.hero-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     background-color: var(--primary-color); 
-    color: var(--headline-color) !important; /* UPDATED: Force color */
+    color: var(--headline-color) !important;
     padding: 1rem 2rem; 
     border-radius: 5px; 
     text-decoration: none; 
     font-weight: 700; 
-    transition: background-color 0.3s ease; 
+    transition: all 0.3s ease; 
     white-space: nowrap; 
     border: none;
     cursor: pointer;
+    min-width: 200px;
+    justify-content: center;
 }
 .hero-button:hover { 
     background-color: #0099e6; 
     color: var(--headline-color) !important; 
     text-decoration: none;
+    transform: translateY(-2px);
+}
+.hero-button.secondary-contact {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.hero-button.secondary-contact:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.button-icon {
+    font-size: 1.2rem;
+}
+.email-display {
+    display: none;
+    background-color: rgba(22, 27, 34, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+.email-display strong {
+    color: var(--primary-color);
 }
 .footer { text-align: center; padding: 2rem; background-color: #0d1117; }
 .footer p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
@@ -352,4 +388,17 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 
 .feature-background.active {
     opacity: 1;
+}
+
+/* Mobile responsiveness for contact buttons */
+@media (max-width: 768px) {
+    .contact-buttons {
+        gap: 0.75rem;
+    }
+    
+    .hero-button {
+        min-width: 180px;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
 }

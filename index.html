@@ -153,8 +153,23 @@
                 <section class="section-container contact-section">
                     <h2 class="section-title">Join Our Mission</h2>
                     <p class="contact-subheading">We are currently raising a £500k seed round to achieve our first flight milestone. For access to our business plan, detailed technical reports, and investor deck, please get in touch.</p>
-                    <!-- UPDATED: Fixed email button with proper encoding -->
-                    <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver%2C%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan%2C%20technical%20reports%2C%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards%2C" class="hero-button" target="_blank">Investor Relations</a>
+                    
+                    <!-- UPDATED: Multiple contact options for better reliability -->
+                    <div class="contact-buttons">
+                        <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver%2C%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan%2C%20technical%20reports%2C%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards%2C" class="hero-button primary-contact" target="_blank" onclick="handleEmailClick(event)">
+                            <span class="button-icon">📧</span>
+                            Investor Relations
+                        </a>
+                        
+                        <button class="hero-button secondary-contact" onclick="copyEmailAddress()">
+                            <span class="button-icon">📋</span>
+                            Copy Email Address
+                        </button>
+                        
+                        <div class="email-display" id="email-display">
+                            <strong>Direct Email:</strong> oliver.hitchings@gmail.com
+                        </div>
+                    </div>
                 </section>
             </div>
             <footer class="footer">
@@ -173,13 +188,15 @@
 
         // --- CONFIGURATION ---
         const config = {
-            imagePath: 'sequence/',
+            smallImagePath: 'sequence small/',
+            fullImagePath: 'sequence/',
             imagePrefix: '',
-            imageExtension: 'png', // Correctly set to PNG
+            imageExtension: 'png',
             frameCount: 210,
             mobileFrameSkip: 3,
             isMobile: window.innerWidth <= 768,
-            loadingThreshold: 10 // Hide loader once the first 10 images are ready
+            loadingThreshold: 5, // Even faster initial load with smaller images
+            qualityUpgradeThreshold: 20 // Switch to full quality after this many frames load
         };
         
         // --- Responsive Canvas ---
@@ -187,52 +204,93 @@
             config.isMobile = window.innerWidth <= 768;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            // Redraw the current frame on resize to prevent a blank canvas
-            if (images[currentFrame] && images[currentFrame].complete) {
+            // Redraw the current frame on resize
+            if (smallImages[currentFrame] && smallImages[currentFrame].complete) {
                 drawFrame(currentFrame);
             }
         }
         window.addEventListener('resize', resizeCanvas);
         
-        // --- Image Loading ---
-        const images = [];
-        let loadedImages = 0;
+        // --- Progressive Image Loading ---
+        const smallImages = []; // 720p images for fast loading
+        const fullImages = [];  // Full resolution images
+        let loadedSmallImages = 0;
+        let loadedFullImages = 0;
         let currentFrame = 0;
+        let usingHighQuality = false; // Track which quality we're using
 
-        // Failsafe: Hide the loading screen after 6 seconds, no matter what
+        // Failsafe: Hide the loading screen after 4 seconds (faster with small images)
         const loadingTimeout = setTimeout(() => {
             console.warn("Loading screen timed out.");
             loadingScreen.classList.add('hidden');
-        }, 6000);
+        }, 4000);
 
-        function preloadImages() {
+        function preloadSmallImages() {
             for (let i = 1; i <= config.frameCount; i++) {
                 const img = new Image();
                 const num = i.toString().padStart(4, '0');
-                img.src = `${config.imagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
+                img.src = `${config.smallImagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
                 
                 img.onload = () => {
-                    loadedImages++;
-                    images[i - 1] = img;
+                    loadedSmallImages++;
+                    smallImages[i - 1] = img;
                     
                     // When the very first image loads, draw it and activate the animation
-                    if (loadedImages === 1) {
-                        drawFrame(0); // Draw the first frame
+                    if (loadedSmallImages === 1) {
+                        drawFrame(0);
                         window.addEventListener('scroll', throttledUpdateImage);
                     }
                     
-                    // Once we've loaded enough images, hide the loading screen
-                    if (loadedImages === config.loadingThreshold) {
-                        clearTimeout(loadingTimeout); // Cancel the failsafe
+                    // Once we've loaded enough small images, hide the loading screen
+                    if (loadedSmallImages === config.loadingThreshold) {
+                        clearTimeout(loadingTimeout);
                         loadingScreen.classList.add('hidden');
+                    }
+                    
+                    // Start loading full images once we have enough small ones
+                    if (loadedSmallImages === config.qualityUpgradeThreshold && !usingHighQuality) {
+                        startLoadingFullImages();
                     }
                 };
                 
                 img.onerror = () => {
-                    console.error(`Failed to load image: ${img.src}. Please check the file path and extension.`);
-                    // Mark as loaded to not block the process, but the frame will be blank
-                    loadedImages++;
+                    console.error(`Failed to load small image: ${img.src}`);
+                    loadedSmallImages++;
                 };
+            }
+        }
+
+        function startLoadingFullImages() {
+            console.log("Starting to load full-resolution images...");
+            
+            for (let i = 1; i <= config.frameCount; i++) {
+                const img = new Image();
+                const num = i.toString().padStart(4, '0');
+                img.src = `${config.fullImagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
+                
+                img.onload = () => {
+                    loadedFullImages++;
+                    fullImages[i - 1] = img;
+                    
+                    // Switch to high quality once we have enough full images
+                    if (loadedFullImages >= config.frameCount * 0.8 && !usingHighQuality) { // 80% loaded
+                        switchToHighQuality();
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.error(`Failed to load full image: ${img.src}`);
+                    loadedFullImages++;
+                };
+            }
+        }
+
+        function switchToHighQuality() {
+            console.log("Switching to high-quality images...");
+            usingHighQuality = true;
+            // Redraw current frame with high quality
+            if (fullImages[currentFrame] && fullImages[currentFrame].complete) {
+                drawFrame(currentFrame);
             }
         }
 
@@ -251,7 +309,11 @@
         }
 
         function drawFrame(frameIndex) {
-            const img = images[frameIndex];
+            // Use high quality if available, otherwise fall back to small
+            const img = usingHighQuality && fullImages[frameIndex] && fullImages[frameIndex].complete 
+                ? fullImages[frameIndex] 
+                : smallImages[frameIndex];
+                
             if (!img || !img.complete) return;
 
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -303,6 +365,81 @@
             };
             window.addEventListener('scroll', handleBannerFade);
 
+            // NEW: Email handling functions
+            window.handleEmailClick = function(event) {
+                // Try to open email client, but provide fallback
+                const email = 'oliver.hitchings@gmail.com';
+                const subject = 'Photon Aerospace Investor Inquiry';
+                const body = `Hello Oliver,
+
+I am interested in learning more about Photon Aerospace and your seed funding round.
+
+Please send me your business plan, technical reports, and investor deck.
+
+Best regards,`;
+                
+                const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                
+                // Try to open email client
+                window.location.href = mailtoLink;
+                
+                // Show a helpful message if email client doesn't open
+                setTimeout(() => {
+                    if (document.hidden || document.webkitHidden) {
+                        // Email client opened successfully
+                        return;
+                    }
+                    
+                    // Show fallback message
+                    showEmailFallback();
+                }, 1000);
+            };
+            
+            window.copyEmailAddress = function() {
+                const email = 'oliver.hitchings@gmail.com';
+                navigator.clipboard.writeText(email).then(() => {
+                    // Show success message
+                    const button = document.querySelector('.secondary-contact');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<span class="button-icon">✅</span> Copied!';
+                    button.style.backgroundColor = '#28a745';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.style.backgroundColor = '';
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = email;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Show success message
+                    const button = document.querySelector('.secondary-contact');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<span class="button-icon">✅</span> Copied!';
+                    button.style.backgroundColor = '#28a745';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.style.backgroundColor = '';
+                    }, 2000);
+                });
+            };
+            
+            function showEmailFallback() {
+                const emailDisplay = document.getElementById('email-display');
+                emailDisplay.style.display = 'block';
+                emailDisplay.innerHTML = `
+                    <strong>Email client not detected.</strong><br>
+                    Please copy this email address: <strong>oliver.hitchings@gmail.com</strong><br>
+                    <small>Subject: Photon Aerospace Investor Inquiry</small>
+                `;
+            }
+
             const technologySection = document.getElementById('technology');
             const featureCards = document.querySelectorAll('.feature-card');
             const bgA = document.getElementById('feature-background-a');
@@ -338,7 +475,7 @@
         
         // --- Start Loading ---
         resizeCanvas();
-        preloadImages();
+        preloadSmallImages(); // Start with small images for fast loading
     </script>
 </body>
 </html>
