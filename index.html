@@ -168,7 +168,7 @@
         const canvas = document.getElementById('image-canvas');
         const context = canvas.getContext('2d');
         const scrollContainer = document.getElementById('scroll-sequence-container');
-        // const cameraText = document.getElementById('camera-text-content'); // No longer needed
+        const loadingScreen = document.getElementById('loading-screen');
 
         // --- CONFIGURATION ---
         const config = {
@@ -184,7 +184,8 @@
             // fadeOutDuration: 0.15,
             preloadRange: 20,
             mobileFrameSkip: 3,
-            isMobile: window.innerWidth <= 768
+            isMobile: window.innerWidth <= 768,
+            loadingThreshold: 20 // Hide loader after this many images are ready
         };
         
         // Make canvas responsive with mobile optimization
@@ -211,7 +212,31 @@
         let isScrolling = false;
         let scrollTimeout;
 
-        // NEW: Optimized image loading with priority queue
+        // --- REBUILT: Loading Screen Logic with a 5-second Max Timeout ---
+        let loadingScreenHidden = false;
+        const hideLoadingScreen = () => {
+            if (loadingScreenHidden) return; // Prevent this from running more than once
+            loadingScreenHidden = true;
+            loadingScreen.classList.add('hidden');
+        };
+
+        // This promise resolves when enough images are loaded
+        const imagesReadyPromise = new Promise(resolve => {
+            window.resolveImagesReady = resolve; // Expose resolver globally to be called from loadImage
+        });
+
+        // This promise resolves after 5 seconds, no matter what
+        const maxWaitPromise = new Promise(resolve => {
+            setTimeout(() => {
+                console.warn("Loading fallback triggered: Hiding loader due to 5-second timeout.");
+                resolve('timeout');
+            }, 5000);
+        });
+
+        // Hide the loader as soon as either the images are ready OR 5 seconds have passed
+        Promise.race([imagesReadyPromise, maxWaitPromise]).then(hideLoadingScreen);
+
+        // Optimized image loading with priority queue
         function preloadImages() {
             // Load first image immediately
             loadImage(1, true);
@@ -248,6 +273,12 @@
                     context.drawImage(img, 0, 0, canvas.width, canvas.height);
                     window.addEventListener('scroll', throttledUpdateImage);
                 }
+
+                // Check if we've loaded enough images to resolve the promise
+                if (loadedImages >= config.loadingThreshold && window.resolveImagesReady) {
+                    window.resolveImagesReady('images loaded');
+                    delete window.resolveImagesReady; // Clean up resolver
+                }
             };
             
             img.onerror = () => {
@@ -265,6 +296,11 @@
                 fallbackImg.onload = () => {
                     images[frameNumber - 1] = fallbackImg;
                     loadedImages++;
+                    // Also check on error
+                    if (loadedImages >= config.loadingThreshold && window.resolveImagesReady) {
+                        window.resolveImagesReady('images loaded on error');
+                        delete window.resolveImagesReady; // Clean up resolver
+                    }
                 };
             };
         }
