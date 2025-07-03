@@ -235,11 +235,11 @@
         let currentFrame = 0;
         let usingHighQuality = false; // Track which quality we're using
 
-        // Failsafe: Hide the loading screen after 4 seconds (faster with small images)
+        // Failsafe: Hide the loading screen after 8 seconds (faster with small images)
         const loadingTimeout = setTimeout(() => {
             console.warn("Loading screen timed out.");
             loadingScreen.classList.add('hidden');
-        }, 4000);
+        }, 8000);
 
         function preloadSmallImages() {
             for (let i = 1; i <= config.frameCount; i++) {
