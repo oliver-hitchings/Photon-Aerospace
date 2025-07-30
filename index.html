@@ -172,7 +172,7 @@
                     
                     <!-- UPDATED: Multiple contact options for better reliability -->
                     <div class="contact-buttons">
-                        <a href="mailto:oliver.hitchings@gmail.com?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver%2C%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan%2C%20technical%20reports%2C%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards%2C" class="hero-button primary-contact" target="_blank" onclick="handleEmailClick(event)">
+                        <a href="mailto:Oliver.Hitchings@photonaerospace.co.uk?subject=Photon%20Aerospace%20Investor%20Inquiry&body=Hello%20Oliver%2C%0D%0A%0D%0AI%20am%20interested%20in%20learning%20more%20about%20Photon%20Aerospace%20and%20your%20seed%20funding%20round.%0D%0A%0D%0APlease%20send%20me%20your%20business%20plan%2C%20technical%20reports%2C%20and%20investor%20deck.%0D%0A%0D%0ABest%20regards%2C" class="hero-button primary-contact" target="_blank" onclick="handleEmailClick(event)">
                             <span class="button-icon">📧</span>
                             Investor Relations
                         </a>
@@ -183,7 +183,7 @@
                         </button>
                         
                         <div class="email-display" id="email-display">
-                            <strong>Direct Email:</strong> oliver.hitchings@gmail.com
+                            <strong>Direct Email:</strong> Oliver.Hitchings@photonaerospace.co.uk
                         </div>
                     </div>
                 </section>
@@ -384,7 +384,7 @@
             // NEW: Email handling functions
             window.handleEmailClick = function(event) {
                 // Try to open email client, but provide fallback
-                const email = 'oliver.hitchings@gmail.com';
+                const email = 'Oliver.Hitchings@photonaerospace.co.uk';
                 const subject = 'Photon Aerospace Investor Inquiry';
                 const body = `Hello Oliver,
 
@@ -412,7 +412,7 @@ Best regards,`;
             };
             
             window.copyEmailAddress = function() {
-                const email = 'oliver.hitchings@gmail.com';
+                const email = 'Oliver.Hitchings@photonaerospace.co.uk';
                 navigator.clipboard.writeText(email).then(() => {
                     // Show success message
                     const button = document.querySelector('.secondary-contact');
@@ -451,7 +451,7 @@ Best regards,`;
                 emailDisplay.style.display = 'block';
                 emailDisplay.innerHTML = `
                     <strong>Email client not detected.</strong><br>
-                    Please copy this email address: <strong>oliver.hitchings@gmail.com</strong><br>
+                    Please copy this email address: <strong>Oliver.Hitchings@photonaerospace.co.uk</strong><br>
                     <small>Subject: Photon Aerospace Investor Inquiry</small>
                 `;
             }
