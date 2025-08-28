@@ -222,8 +222,44 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .timeline-item:nth-child(odd) .timeline-content { text-align: right; }
 .timeline-content h3 { font-size: 1.75rem; margin-bottom: 0.5rem; color: var(--primary-color); }
 .timeline-content p { font-size: 1rem; line-height: 1.6; font-weight: 300; }
-.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; max-width: 900px; margin: 0 auto; }
-.team-member { text-align: center; }
+.team-grid {
+    display: flex; /* Use flexbox for desktop layout */
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    justify-content: center; /* Center the team members */
+    gap: 3rem; /* Space between team members */
+    max-width: 1200px; /* Increased max-width to allow more space for three columns */
+    margin: 0 auto; /* Center the grid */
+}
+
+.team-member {
+    flex: 1 1 300px; /* Allow items to grow, shrink, and have a base width */
+    max-width: 350px; /* Limit individual card width */
+    text-align: center;
+    background-color: rgba(22, 27, 34, 0.7); /* Consistent background with other cards */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: transform 0.3s ease, border-color 0.3s ease; 
+}
+
+.team-member:hover {
+    transform: translateY(-5px); 
+    border-color: var(--primary-color); 
+}
+
+/* Mobile Responsiveness for team grid */
+@media (max-width: 768px) {
+    .team-grid {
+        flex-direction: column; /* Stack items vertically on mobile */
+        align-items: center; /* Center items when stacked */
+        gap: 2rem; /* Adjust gap for mobile */
+    }
+
+    .team-member {
+        max-width: 90%; /* Adjust width for mobile */
+        padding: 1.5rem;
+    }
+}
 
 /* UPDATED: Perfect circular image containers with fallbacks */
 .team-photo-container, .advisor-photo-container {
