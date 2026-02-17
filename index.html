@@ -42,13 +42,7 @@
         <!--  SCROLL ANIMATION AREA  -->
         <!-- ======================= -->
         <div id="scroll-sequence-container">
-            <canvas id="image-canvas"></canvas>
-            
-            <!-- Commented out to test smooth scrolling -->
-            <!-- <div id="camera-text-content">
-                <h2>Modular Payloads for ISTAR</h2>
-                <p>Our drone features a hot-swappable payload bay, allowing for mission-specific customization with high-resolution cameras, signals intelligence packages, and advanced sensor suites.</p>
-            </div> -->
+            <video id="scroll-video" muted playsinline preload="auto"></video>
         </div>
 
         <!-- The rest of your website content starts here -->
@@ -205,184 +199,48 @@
         </div>
     </div>
 
-    <!-- The JavaScript that runs the animation -->
     <script>
-        // --- Core Elements ---
-        const canvas = document.getElementById('image-canvas');
-        const context = canvas.getContext('2d');
+        // --- Scroll Video ---
+        const video = document.getElementById('scroll-video');
         const scrollContainer = document.getElementById('scroll-sequence-container');
         const loadingScreen = document.getElementById('loading-screen');
+        let videoReady = false;
+        let isScrolling = false;
 
-        // --- CONFIGURATION ---
-        const config = {
-            smallImagePath: 'sequence small/',
-            fullImagePath: 'sequence/',
-            imagePrefix: '',
-            imageExtension: 'png',
-            frameCount: 210,
-            mobileFrameSkip: 3,
-            isMobile: window.innerWidth <= 768,
-            loadingThreshold: 5, // Even faster initial load with smaller images
-            qualityUpgradeThreshold: 20 // Switch to full quality after this many frames load
-        };
-        
-        // --- Responsive Canvas ---
-        function resizeCanvas() {
-            config.isMobile = window.innerWidth <= 768;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            // Redraw the current frame on resize
-            if (smallImages[currentFrame] && smallImages[currentFrame].complete) {
-                drawFrame(currentFrame);
-            }
-        }
-        window.addEventListener('resize', resizeCanvas);
-        
-        // --- Progressive Image Loading ---
-        const smallImages = []; // 720p images for fast loading
-        const fullImages = [];  // Full resolution images
-        let loadedSmallImages = 0;
-        let loadedFullImages = 0;
-        let currentFrame = 0;
-        let usingHighQuality = false; // Track which quality we're using
-
-        // Failsafe: Hide the loading screen after 8 seconds (faster with small images)
         const loadingTimeout = setTimeout(() => {
-            console.warn("Loading screen timed out.");
             loadingScreen.classList.add('hidden');
         }, 8000);
 
-        function preloadSmallImages() {
-            for (let i = 1; i <= config.frameCount; i++) {
-                const img = new Image();
-                const num = i.toString().padStart(4, '0');
-                img.src = `${config.smallImagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
-                
-                img.onload = () => {
-                    loadedSmallImages++;
-                    smallImages[i - 1] = img;
-                    
-                    // When the very first image loads, draw it and activate the animation
-                    if (loadedSmallImages === 1) {
-                        drawFrame(0);
-                        window.addEventListener('scroll', throttledUpdateImage);
-                    }
-                    
-                    // Once we've loaded enough small images, hide the loading screen
-                    if (loadedSmallImages === config.loadingThreshold) {
-                        clearTimeout(loadingTimeout);
-                        loadingScreen.classList.add('hidden');
-                    }
-                    
-                    // Start loading full images once we have enough small ones
-                    if (loadedSmallImages === config.qualityUpgradeThreshold && !usingHighQuality) {
-                        startLoadingFullImages();
-                    }
-                };
-                
-                img.onerror = () => {
-                    console.error(`Failed to load small image: ${img.src}`);
-                    loadedSmallImages++;
-                };
-            }
+        // Fetch entire video as blob so seeking works without range request support
+        fetch('assets/sequence.mp4')
+            .then(r => r.blob())
+            .then(blob => {
+                video.src = URL.createObjectURL(blob);
+            });
+
+        video.addEventListener('loadedmetadata', () => {
+            videoReady = true;
+            clearTimeout(loadingTimeout);
+            loadingScreen.classList.add('hidden');
+            updateVideo();
+        }, { once: true });
+
+        function updateVideo() {
+            if (!videoReady) return;
+            const rect = scrollContainer.getBoundingClientRect();
+            const scrollFraction = Math.max(0, Math.min(1, -rect.top / (scrollContainer.scrollHeight - window.innerHeight)));
+            video.currentTime = scrollFraction * video.duration;
         }
 
-        function startLoadingFullImages() {
-            console.log("Starting to load full-resolution images...");
-            
-            for (let i = 1; i <= config.frameCount; i++) {
-                const img = new Image();
-                const num = i.toString().padStart(4, '0');
-                img.src = `${config.fullImagePath}${config.imagePrefix}${num}.${config.imageExtension}`;
-                
-                img.onload = () => {
-                    loadedFullImages++;
-                    fullImages[i - 1] = img;
-                    
-                    // Switch to high quality once we have enough full images
-                    if (loadedFullImages >= config.frameCount * 0.8 && !usingHighQuality) { // 80% loaded
-                        switchToHighQuality();
-                    }
-                };
-                
-                img.onerror = () => {
-                    console.error(`Failed to load full image: ${img.src}`);
-                    loadedFullImages++;
-                };
-            }
-        }
-
-        function switchToHighQuality() {
-            console.log("Switching to high-quality images...");
-            usingHighQuality = true;
-            // Redraw current frame with high quality
-            if (fullImages[currentFrame] && fullImages[currentFrame].complete) {
-                drawFrame(currentFrame);
-            }
-        }
-
-        // --- Animation & Drawing ---
-        let isScrolling = false;
-        let scrollTimeout;
-
-        function throttledUpdateImage() {
+        window.addEventListener('scroll', () => {
             if (!isScrolling) {
                 requestAnimationFrame(() => {
-                    updateImage();
+                    updateVideo();
                     isScrolling = false;
                 });
                 isScrolling = true;
             }
-        }
-
-        function drawFrame(frameIndex) {
-            // Use high quality if available, otherwise fall back to small
-            const img = usingHighQuality && fullImages[frameIndex] && fullImages[frameIndex].complete 
-                ? fullImages[frameIndex] 
-                : smallImages[frameIndex];
-                
-            if (!img || !img.complete) return;
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Handle mobile cropping
-            if (config.isMobile) {
-                const imgAspect = img.width / img.height;
-                const canvasAspect = canvas.width / canvas.height;
-                let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
-                
-                if (imgAspect > canvasAspect) {
-                    sWidth = img.height * canvasAspect;
-                    sx = (img.width - sWidth) / 2;
-                } else {
-                    sHeight = img.width / canvasAspect;
-                    sy = (img.height - sHeight) / 2;
-                }
-                context.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-            } else {
-                context.drawImage(img, 0, 0, canvas.width, canvas.height);
-            }
-        }
-
-        function updateImage() {
-            const rect = scrollContainer.getBoundingClientRect();
-            const scrollTop = -rect.top;
-            const maxScrollTop = scrollContainer.scrollHeight - window.innerHeight;
-            let scrollFraction = Math.max(0, Math.min(1, scrollTop / maxScrollTop));
-            
-            let frameIndex = Math.floor(scrollFraction * (config.frameCount - 1));
-            
-            if (config.isMobile) {
-                frameIndex = Math.floor(frameIndex / config.mobileFrameSkip) * config.mobileFrameSkip;
-            }
-            
-            frameIndex = Math.max(0, Math.min(config.frameCount - 1, frameIndex));
-
-            if (frameIndex !== currentFrame) {
-                currentFrame = frameIndex;
-                drawFrame(frameIndex);
-            }
-        }
+        });
 
         // --- Initialize Everything ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -500,10 +358,6 @@ Best regards,`;
                 });
             }
         });
-        
-        // --- Start Loading ---
-        resizeCanvas();
-        preloadSmallImages(); // Start with small images for fast loading
     </script>
 </body>
 </html>

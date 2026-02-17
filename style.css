@@ -90,8 +90,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /* ================================== */
 /*  SCROLL SEQUENCE STYLES        */
 /* ================================== */
-#scroll-sequence-container { height: 3000px; position: relative; z-index: 1; transform: translateZ(0); will-change: transform; }
-#image-canvas { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; transform: translateZ(0); will-change: transform; }
+#scroll-sequence-container { height: 3000px; position: relative; z-index: 1; }
+#scroll-video { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; }
 
 /* --- REBUILT WELCOME BANNER --- */
 #welcome-banner {
@@ -120,25 +120,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     margin: 0;
 }
 
-#camera-text-content { 
-    position: sticky; 
-    top: 50%; 
-    left: 80%; /* UPDATED: Move further to the right */
-    transform: translate(-20%, -50%); /* UPDATED: Adjust transform for right positioning */
-    z-index: 5; 
-    max-width: 500px; 
-    padding: 2rem; 
-    color: white; 
-    background-color: rgba(13, 17, 23, 0.7); 
-    backdrop-filter: blur(10px); 
-    border-radius: 8px; 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    text-align: center; 
-    opacity: 0; 
-    transition: opacity 0.5s ease, transform 0.5s ease; 
-}
-#camera-text-content h2 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); }
-#camera-text-content p { font-size: 1.1rem; line-height: 1.6; }
+
 #rest-of-site { position: relative; z-index: 10; background-color: var(--background-color); }
 
 /* --- Section Styles --- */
@@ -426,20 +408,6 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
         top: 20%;
     }
     
-    #camera-text-content { 
-        left: 85%; 
-        transform: translate(-15%, -50%);
-        max-width: 300px;
-        padding: 1.5rem;
-    }
-    
-    #camera-text-content h2 {
-        font-size: 1.8rem;
-    }
-    
-    #camera-text-content p {
-        font-size: 1rem;
-    }
 }
 
 /* NEW: Mobile-specific optimizations */
