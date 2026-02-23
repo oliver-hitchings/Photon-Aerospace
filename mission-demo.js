@@ -29,7 +29,9 @@
         drone: {
             count: 5,
             cameraRangePx: 470,
-            fovDeg: 48
+            fovDeg: 48,
+            iconScale: 1,
+            headingSmoothing: 0.05
         },
         sim: {
             targetRefreshMs: 1200,
@@ -290,6 +292,7 @@
                 enduranceHours: 24 + i * 2.9,
                 batteryBase: 96.5 + Math.random() * 2,
                 marker: null,
+                iconWrap: null,
                 wedgePath: null,
                 trackedOperatorId: null
             };
@@ -300,12 +303,25 @@
             marker.dataset.droneId = drone.id;
             marker.style.left = `${drone.x}px`;
             marker.style.top = `${drone.y}px`;
-            marker.innerHTML = `<span>${i + 1}</span><span class="drone-label">${drone.id}</span>`;
+            marker.innerHTML = `
+                <span class="uav-icon-wrap" aria-hidden="true">
+                    <svg class="uav-icon" viewBox="0 0 48 48" focusable="false">
+                        <path class="uav-shadow" d="M24 7 L19 14 L15 20 L7 23 L7 25 L15 28 L19 34 L24 41 L29 34 L33 28 L41 25 L41 23 L33 20 L29 14 Z"></path>
+                        <path class="uav-wing" d="M9 23 L20 20 L20 28 L9 25 Z"></path>
+                        <path class="uav-wing" d="M39 23 L28 20 L28 28 L39 25 Z"></path>
+                        <path class="uav-tail" d="M21 34 L18 39 L24 41 L30 39 L27 34 Z"></path>
+                        <path class="uav-body" d="M24 9 L20 16 L20 31 L24 39 L28 31 L28 16 Z"></path>
+                        <circle class="uav-sensor" cx="24" cy="13.5" r="2"></circle>
+                    </svg>
+                </span>
+                <span class="drone-label">${drone.id}</span>
+            `;
             marker.setAttribute('aria-label', `${drone.id} camera feed`);
             marker.addEventListener('click', () => {
                 setSelection({ type: 'drone', id: drone.id });
             });
             drone.marker = marker;
+            drone.iconWrap = marker.querySelector('.uav-icon-wrap');
             refs.dronesLayer.appendChild(marker);
 
             const wedgePath = document.createElementNS(SVG_NS, 'path');
@@ -456,8 +472,8 @@
         const timeSeconds = now * 0.001;
 
         state.drones.forEach((drone, index) => {
-            const driftX = Math.cos(timeSeconds * 0.8 + drone.phase) * 16;
-            const driftY = Math.sin(timeSeconds * 0.68 + drone.phase * 0.9) * 10;
+            const driftX = Math.cos(timeSeconds * 0.8 + drone.phase) * 8;
+            const driftY = Math.sin(timeSeconds * 0.68 + drone.phase * 0.9) * 5;
 
             let desired = {
                 x: drone.target.x + driftX,
@@ -490,7 +506,7 @@
 
             const directionTarget = trackedOperator || drone.target;
             const desiredHeading = Math.atan2(directionTarget.y - drone.y, directionTarget.x - drone.x);
-            drone.heading = lerpAngle(drone.heading, desiredHeading, 0.08);
+            drone.heading = lerpAngle(drone.heading, desiredHeading, MISSION_DEFENCE_CONFIG.drone.headingSmoothing);
 
             drone.altitude = drone.baseAltitude + Math.sin(timeSeconds * 0.7 + drone.phase) * 18;
             drone.battery = drone.batteryBase + Math.sin(timeSeconds * 0.19 + drone.phase) * 1.1;
@@ -528,6 +544,10 @@
 
             drone.marker.classList.toggle('is-selected', Boolean(isSelectedDrone));
             drone.marker.classList.toggle('is-targeting-operator', Boolean(isTargetingSelectedOperator));
+            if (drone.iconWrap) {
+                const headingDegrees = toDegrees(drone.heading) + 90;
+                drone.iconWrap.style.transform = `translate(-50%, -50%) rotate(${headingDegrees.toFixed(1)}deg) scale(${MISSION_DEFENCE_CONFIG.drone.iconScale})`;
+            }
 
             const wedgePath = describeWedge(
                 drone.x,

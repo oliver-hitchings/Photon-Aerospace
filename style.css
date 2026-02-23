@@ -154,7 +154,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-roadmap::before {
-    background-color: rgba(6, 10, 15, 0.9);
+    background-color: rgba(10, 12, 14, 0.93);
 }
 
 .mission-roadmap-container {
@@ -188,11 +188,11 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     flex-direction: column;
     border-radius: 0;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(169, 183, 195, 0.24);
     background:
-        radial-gradient(circle at 15% 5%, rgba(0, 170, 255, 0.16), transparent 30%),
-        linear-gradient(180deg, rgba(8, 13, 18, 0.94), rgba(4, 8, 12, 0.94));
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+        radial-gradient(circle at 18% 7%, rgba(133, 148, 161, 0.12), transparent 42%),
+        linear-gradient(180deg, rgba(17, 21, 24, 0.96), rgba(11, 14, 18, 0.96));
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.42);
 }
 
 .mission-toolbar {
@@ -201,8 +201,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    background-color: rgba(7, 12, 18, 0.88);
+    border-bottom: 1px solid rgba(174, 186, 197, 0.22);
+    background-color: rgba(17, 22, 27, 0.9);
 }
 
 .mission-toolbar-left {
@@ -220,7 +220,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(201, 209, 217, 0.9);
+    color: rgba(211, 217, 223, 0.84);
 }
 
 .mission-mode-toggle {
@@ -229,8 +229,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-mode-button {
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(20, 28, 36, 0.8);
+    border: 1px solid rgba(173, 186, 197, 0.28);
+    background: rgba(40, 46, 53, 0.72);
     color: var(--text-color);
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
@@ -242,13 +242,13 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-mode-button:hover {
-    border-color: rgba(0, 170, 255, 0.85);
+    border-color: rgba(190, 205, 216, 0.7);
 }
 
 .mission-mode-button.is-active {
-    background-color: var(--primary-color);
-    color: #081018;
-    border-color: var(--primary-color);
+    background-color: rgba(177, 193, 205, 0.38);
+    color: #e8edf1;
+    border-color: rgba(196, 210, 220, 0.76);
     font-weight: 700;
 }
 
@@ -261,7 +261,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .mission-defence-view {
     position: relative;
     height: 100%;
-    background-color: #05080d;
+    background-color: #0a0d10;
 }
 
 .mission-stage-scroll {
@@ -271,7 +271,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     padding: 1rem;
     touch-action: pan-x pan-y;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 170, 255, 0.65) rgba(255, 255, 255, 0.08);
+    scrollbar-color: rgba(168, 180, 191, 0.55) rgba(255, 255, 255, 0.08);
 }
 
 .mission-stage {
@@ -281,9 +281,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     margin: 0 auto;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
-    background-color: #111822;
+    border: 1px solid rgba(183, 195, 205, 0.28);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+    background-color: #12171c;
 }
 
 #mission-map-image {
@@ -309,23 +309,23 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 #mission-polygon {
-    fill: rgba(0, 170, 255, 0.1);
-    stroke: rgba(100, 210, 255, 0.92);
-    stroke-width: 2;
+    fill: rgba(128, 154, 176, 0.11);
+    stroke: rgba(174, 196, 211, 0.78);
+    stroke-width: 1.7;
     filter: url(#missionGlow);
 }
 
 #mission-polygon-outline {
     fill: none;
-    stroke: rgba(210, 238, 255, 0.7);
-    stroke-width: 1.5;
-    stroke-dasharray: 7 7;
+    stroke: rgba(196, 210, 221, 0.6);
+    stroke-width: 1.2;
+    stroke-dasharray: 8 8;
 }
 
 .polygon-handle {
-    fill: #d7ecff;
-    stroke: rgba(0, 170, 255, 0.92);
-    stroke-width: 2;
+    fill: #d2dbe3;
+    stroke: rgba(136, 155, 170, 0.92);
+    stroke-width: 1.6;
     cursor: grab;
     pointer-events: all;
     touch-action: none;
@@ -336,9 +336,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .camera-wedge {
-    fill: rgba(0, 170, 255, 0.2);
-    stroke: rgba(156, 222, 255, 0.8);
-    stroke-width: 1.2;
+    fill: rgba(114, 134, 148, 0.16);
+    stroke: rgba(174, 194, 208, 0.54);
+    stroke-width: 0.9;
     pointer-events: none;
 }
 
@@ -358,8 +358,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 
 .operator-pin {
     transform: translate(-50%, -100%);
-    width: 36px;
-    height: 46px;
+    width: 34px;
+    height: 44px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -367,31 +367,31 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .operator-pin-core {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.82);
-    background: rgba(9, 14, 20, 0.9);
+    border: 1px solid rgba(214, 221, 228, 0.78);
+    background: rgba(25, 31, 37, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #b9e7ff;
-    font-size: 0.9rem;
-    font-weight: 700;
-    box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.25), 0 0 12px rgba(0, 170, 255, 0.5);
+    color: #d8dee6;
+    font-size: 0.72rem;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px rgba(182, 197, 208, 0.28);
 }
 
 .operator-pin-core::after {
     content: '';
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     bottom: -4px;
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
-    background: rgba(9, 14, 20, 0.95);
-    border-right: 2px solid rgba(255, 255, 255, 0.75);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.75);
+    background: rgba(24, 30, 35, 0.94);
+    border-right: 1px solid rgba(220, 226, 231, 0.72);
+    border-bottom: 1px solid rgba(220, 226, 231, 0.72);
 }
 
 .operator-pin-label {
@@ -401,61 +401,103 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     border-radius: 999px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #d9e9f7;
-    background: rgba(6, 9, 14, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #dde4ea;
+    background: rgba(19, 24, 29, 0.82);
+    border: 1px solid rgba(181, 194, 205, 0.28);
 }
 
 .operator-pin.is-selected .operator-pin-core {
-    border-color: #6fd6ff;
-    box-shadow: 0 0 0 2px rgba(111, 214, 255, 0.35), 0 0 18px rgba(0, 170, 255, 0.75);
+    border-color: #f0d69f;
+    box-shadow: 0 0 0 2px rgba(240, 214, 159, 0.36);
 }
 
 .drone-marker {
     transform: translate(-50%, -50%);
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    background: radial-gradient(circle at 30% 30%, #d2f0ff, #1285b3);
-    color: #041119;
-    font-size: 0.64rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    border: 1px solid rgba(186, 199, 209, 0.2);
+    background: rgba(14, 19, 24, 0.2);
+    color: #d8e0e6;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.42), 0 0 14px rgba(0, 170, 255, 0.42);
-    transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 0 0 1px rgba(166, 183, 195, 0.12);
+    transition: transform 0.16s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .drone-marker:hover {
-    transform: translate(-50%, -50%) scale(1.06);
+    transform: translate(-50%, -50%) scale(1.02);
 }
 
 .drone-marker.is-selected {
-    border-color: #c9f0ff;
-    box-shadow: 0 0 0 2px rgba(143, 219, 255, 0.45), 0 0 20px rgba(0, 170, 255, 0.85);
+    border-color: rgba(223, 233, 240, 0.68);
+    box-shadow: 0 0 0 2px rgba(212, 225, 235, 0.36);
 }
 
 .drone-marker.is-targeting-operator {
-    box-shadow: 0 0 0 2px rgba(255, 188, 91, 0.36), 0 0 16px rgba(255, 188, 91, 0.65);
+    box-shadow: 0 0 0 2px rgba(229, 197, 137, 0.38);
+}
+
+.uav-icon-wrap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.uav-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.uav-shadow {
+    fill: rgba(18, 22, 27, 0.54);
+}
+
+.uav-wing {
+    fill: rgba(163, 177, 189, 0.88);
+    stroke: rgba(220, 228, 234, 0.5);
+    stroke-width: 0.55;
+}
+
+.uav-tail {
+    fill: rgba(147, 162, 173, 0.9);
+    stroke: rgba(211, 220, 226, 0.44);
+    stroke-width: 0.5;
+}
+
+.uav-body {
+    fill: rgba(190, 202, 212, 0.94);
+    stroke: rgba(233, 238, 242, 0.52);
+    stroke-width: 0.65;
+}
+
+.uav-sensor {
+    fill: rgba(239, 214, 155, 0.86);
 }
 
 .drone-label {
     position: absolute;
-    top: 31px;
+    top: 43px;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
     font-size: 0.56rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #d6e2ef;
-    background: rgba(6, 11, 16, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(216, 224, 230, 0.86);
+    background: rgba(15, 20, 24, 0.82);
+    border: 1px solid rgba(173, 186, 196, 0.2);
     border-radius: 999px;
-    padding: 2px 6px;
+    padding: 1px 6px;
 }
 
 .mission-camera-overlay,
@@ -471,9 +513,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     width: 260px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(5, 9, 13, 0.86);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.44);
+    border: 1px solid rgba(183, 196, 206, 0.26);
+    background: rgba(17, 22, 27, 0.88);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
 }
 
 .mission-camera-header {
@@ -481,28 +523,28 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     flex-direction: column;
     gap: 0.18rem;
     padding: 0.5rem 0.65rem;
-    background: rgba(6, 11, 17, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(20, 26, 31, 0.95);
+    border-bottom: 1px solid rgba(181, 194, 205, 0.22);
 }
 
 .mission-camera-header strong {
     font-size: 0.75rem;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: #d8f0ff;
+    color: #dee6ec;
 }
 
 .mission-camera-header span {
     font-size: 0.66rem;
     letter-spacing: 0.04em;
-    color: rgba(201, 209, 217, 0.9);
+    color: rgba(201, 209, 217, 0.82);
 }
 
 .mission-camera-frame {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
-    background-color: #0d1218;
+    background-color: #141b21;
 }
 
 #mission-camera-image {
@@ -521,9 +563,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(6, 10, 15, 0.86);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(184, 197, 207, 0.28);
+    background: rgba(18, 23, 28, 0.9);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
 }
 
 .mission-telemetry-header {
@@ -532,7 +574,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     align-items: baseline;
     gap: 0.5rem;
     padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+    border-bottom: 1px solid rgba(181, 195, 205, 0.22);
 }
 
 .mission-telemetry-header h4 {
@@ -544,14 +586,14 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #bfe6ff;
+    color: #d2dce3;
 }
 
 .mission-operator-focus {
     border-radius: 8px;
-    border: 1px solid rgba(255, 186, 83, 0.5);
-    background: rgba(255, 186, 83, 0.12);
-    color: #ffe5b6;
+    border: 1px solid rgba(219, 194, 143, 0.5);
+    background: rgba(213, 185, 132, 0.13);
+    color: #f5e6c7;
     font-size: 0.74rem;
     line-height: 1.4;
     padding: 0.45rem 0.55rem;
@@ -566,13 +608,13 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-metric span {
-    color: rgba(201, 209, 217, 0.88);
+    color: rgba(205, 213, 220, 0.86);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .mission-metric strong {
-    color: #f3fbff;
+    color: #e8edf1;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -583,7 +625,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     height: 12px;
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(186, 198, 207, 0.36);
 }
 
 .mission-battery-gradient {
@@ -599,7 +641,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     width: 3px;
     left: 96%;
     border-radius: 2px;
-    background: #f5fbff;
+    background: #eef2f5;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
 }
 
@@ -613,8 +655,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     display: grid;
     place-items: center;
     text-align: center;
-    background: rgba(6, 10, 16, 0.82);
-    color: #f1f7ff;
+    background: rgba(18, 24, 30, 0.86);
+    color: #e6edf3;
     font-size: 0.85rem;
     line-height: 1.45;
     padding: 1rem;
@@ -640,8 +682,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     gap: 0.85rem;
     padding: 1.5rem;
     background:
-        radial-gradient(circle at center, rgba(0, 170, 255, 0.12), transparent 60%),
-        linear-gradient(180deg, rgba(6, 10, 15, 0.95), rgba(3, 7, 11, 0.96));
+        radial-gradient(circle at center, rgba(165, 178, 188, 0.12), transparent 60%),
+        linear-gradient(180deg, rgba(17, 21, 26, 0.95), rgba(12, 15, 19, 0.96));
 }
 
 .mission-commercial-view h3 {
@@ -655,11 +697,11 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-return-button {
-    border: 1px solid rgba(0, 170, 255, 0.8);
+    border: 1px solid rgba(197, 208, 217, 0.6);
     border-radius: 999px;
     padding: 0.6rem 1.2rem;
-    background-color: rgba(0, 170, 255, 0.18);
-    color: #d3edff;
+    background-color: rgba(157, 175, 188, 0.2);
+    color: #e2eaef;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 700;
@@ -667,7 +709,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-return-button:hover {
-    background-color: rgba(0, 170, 255, 0.28);
+    background-color: rgba(157, 175, 188, 0.32);
 }
 
 .mission-stage-scroll::-webkit-scrollbar {
@@ -680,7 +722,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .mission-stage-scroll::-webkit-scrollbar-thumb {
-    background: rgba(0, 170, 255, 0.65);
+    background: rgba(164, 178, 189, 0.62);
     border-radius: 999px;
 }
 
@@ -750,6 +792,20 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
         padding: 0.55rem;
         gap: 0.45rem;
     }
+
+    .drone-marker {
+        width: 50px;
+        height: 50px;
+    }
+
+    .uav-icon-wrap {
+        width: 30px;
+        height: 30px;
+    }
+
+    .drone-label {
+        top: 39px;
+    }
 }
 
 @media (max-width: 600px) {
@@ -794,6 +850,21 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     .mission-telemetry-panel {
         width: 170px;
         gap: 0.3rem;
+    }
+
+    .drone-marker {
+        width: 44px;
+        height: 44px;
+    }
+
+    .uav-icon-wrap {
+        width: 26px;
+        height: 26px;
+    }
+
+    .drone-label {
+        top: 35px;
+        font-size: 0.52rem;
     }
 
     .mission-telemetry-header h4 {
