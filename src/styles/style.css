@@ -955,7 +955,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 .team-bg { background-color: var(--background-color); }
 .contact-bg {
-    background: url('assets/JoinOurMission.png') center/cover fixed
+    background: url('/assets/JoinOurMission.png') center/cover fixed
                 var(--background-color);
 }
 

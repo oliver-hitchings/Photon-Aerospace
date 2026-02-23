@@ -1,83 +1,134 @@
-# Photon Aerospace Website
+# Photon Aerospace Website (React + TypeScript)
 
-Photon Aerospace is a static marketing site with an interactive Defence mission demo embedded in the `Roadmap` section.
+Photon Aerospace is now a Vite-powered React + TypeScript single-page app with full parity migration from the prior static HTML/CSS/JS implementation.
 
-## Project Structure
+## Requirements
 
-- `index.html` - page structure and inline behavior for the main site.
-- `style.css` - global styles plus mission demo styling.
-- `mission-demo.js` - Defence mission simulation logic (polygon, drones, operators, telemetry, mode toggle).
-- `assets/` - images/video used across sections and mission overlays.
+- Node.js 18+
+- npm 9+
 
-## Defence Mission Demo (Current)
-
-The roadmap section has been replaced by a mission-style operator UI with:
-
-- Sticky full-screen section while scrolling through the roadmap area.
-- `Defence` and `Commercial` mode buttons.
-- Commercial mode currently shows a placeholder state.
-- Static desert map with interactive overlays.
-- Draggable polygon mission area.
-- 5 simulated drones that rebalance coverage when polygon points move.
-- Camera direction wedges ("pizza slices") per drone.
-- 3 clickable operator pins on the map.
-- Click drone: camera overlay and telemetry focus that drone.
-- Click operator: highlights operator and shows nearest drone feed context.
-- Battery/RTB/range/endurance telemetry panel for selected context.
-- Logical mission scene rendered at `1600x900` and scaled responsively for viewport fit.
-- Adaptive compact HUD mode on smaller screens.
-
-## Browser and Device Support
-
-Current target baseline:
-
-- Chrome (desktop/mobile): latest 2 versions
-- Safari (macOS + iOS): latest 2 versions
-- Edge: latest 2 versions
-- Firefox: latest 2 versions
-
-Compatibility behaviors included:
-
-- Dynamic viewport height handling (`dvh/svh` + JS fallback) for mobile browser chrome.
-- `backdrop-filter` fallback styling when blur support is unavailable.
-- Mobile fallback for `background-attachment: fixed`.
-
-## Required Mission Assets
-
-Expected mission asset filenames:
-
-- `assets/desert-map-1.jpg` (map background)
-- `assets/drone-image-1.jpg` (camera overlay image)
-
-If an asset is missing, the UI shows an in-panel fallback message instead of failing.
-
-## Run Locally
-
-This repo is static (no build step required). Serve from the repository root with any local HTTP server.
-
-Example options:
+## Install
 
 ```bash
-python -m http.server 5173
+npm install
 ```
+
+## Run (Development)
 
 ```bash
-npx serve . -l 5173
+npm run dev
 ```
 
-Then open:
+Default local URL:
 
-- `http://localhost:5173/`
+- `http://127.0.0.1:5173/`
 
-## Known Limitations
+## Build (Production)
 
-- Commercial mode is intentionally a placeholder.
-- Drone movement and telemetry are currently dummy/simulated values.
-- Mission simulation coordinates are fixed to a logical `1600x900` scene.
-- Extremely narrow portrait screens may require visual zooming by the user for very fine polygon handle edits.
+```bash
+npm run build
+```
 
-## Next Recommended Improvements
+Optional production preview:
 
-- Implement full Commercial mission view.
-- Replace dummy telemetry with live or replay mission data.
-- Add configurable mission presets and operator layouts.
+```bash
+npm run preview
+```
+
+## Route / Page Map
+
+This project is intentionally a **single React route** for parity with the legacy site:
+
+- `/`
+
+In-page hash anchors preserved:
+
+- `#technology`
+- `#roadmap`
+- `#team`
+- `#contact`
+
+## Migration Map (Legacy -> New)
+
+### Entry + App shell
+
+- Legacy: `/index.html`
+- New:
+  - `/index.html` (Vite entry template + root mount)
+  - `/src/main.tsx`
+  - `/src/App.tsx`
+
+### Section markup
+
+- Navbar -> `/src/components/Navbar.tsx`
+- Technology -> `/src/components/TechnologySection.tsx`
+- Mission Roadmap -> `/src/components/MissionRoadmapSection.tsx`
+- Team + Advisory -> `/src/components/TeamSection.tsx`
+- Contact -> `/src/components/ContactSection.tsx`
+- Footer -> `/src/components/SiteFooter.tsx`
+
+### Legacy inline script behaviors (from old `index.html`)
+
+- Scroll video loading/scrubbing -> `/src/hooks/useScrollSequenceVideo.ts`
+- Welcome banner fade on scroll -> `/src/hooks/useWelcomeBannerFade.ts`
+- Feature-card background switching -> `/src/hooks/useFeatureCardBackgrounds.ts`
+- Email and clipboard handling -> `/src/components/ContactSection.tsx`
+
+### Legacy mission engine
+
+- Legacy: `/mission-demo.js`
+- New:
+  - `/src/mission/missionDemo.ts` (`initMissionDemo(root): cleanup`)
+  - `/src/hooks/useMissionDemo.ts`
+
+### Styling
+
+- Legacy global CSS: `/style.css`
+- New global CSS import: `/src/styles/style.css`
+
+Class names and DOM IDs are preserved for parity.
+
+## Asset Strategy
+
+Canonical static assets are served from Vite public root:
+
+- `/public/assets/*` -> runtime `/assets/*`
+
+Examples:
+
+- `/assets/sequence.mp4`
+- `/assets/desert-map-1.jpg`
+- `/assets/drone-image-1.jpg`
+
+CNAME is preserved via:
+
+- `/public/CNAME`
+
+## Behavior Parity Notes
+
+Preserved behaviors include:
+
+- Loading screen + timeout fallback.
+- Scroll-scrubbed hero video using blob fetch.
+- Welcome banner fade behavior.
+- Feature background hover transitions.
+- Team/advisor image error fallbacks.
+- Contact mailto + clipboard + fallback messaging.
+- Mission demo interactions:
+  - defence/commercial mode toggle
+  - draggable polygon
+  - drone simulation and camera wedges
+  - operator/drone selection
+  - telemetry updates
+  - resize/orientation responsive scaling
+
+## TypeScript Notes
+
+- TypeScript is enabled project-wide with `strict: true`.
+- `noImplicitAny` is intentionally relaxed to `false` to preserve mission-demo parity during migration without altering simulation behavior.
+- Mission module includes localized type-tightening TODO comments for incremental hardening.
+
+## Known Gaps
+
+- Commercial mode remains an intentional placeholder (matches legacy behavior).
+- Mission telemetry remains simulated/dummy values (matches legacy behavior).

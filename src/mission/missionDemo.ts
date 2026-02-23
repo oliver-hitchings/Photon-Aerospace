@@ -1,10 +1,116 @@
-(() => {
+import { ASSETS } from '../constants/site';
+
+export interface Point {
+    x: number;
+    y: number;
+}
+
+export interface LayoutState {
+    scale: number;
+    offsetX: number;
+    offsetY: number;
+    viewportWidth: number;
+    viewportHeight: number;
+}
+
+export interface Selection {
+    type: 'drone' | 'operator';
+    id: string;
+}
+
+export interface Operator {
+    id: string;
+    x: number;
+    y: number;
+    element: HTMLButtonElement | null;
+}
+
+export interface Drone extends Record<string, unknown> {
+    id: string;
+    x: number;
+    y: number;
+    target: Point;
+    coverageAnchor: Point;
+    heading: number;
+    cameraHeading: number;
+    phase: number;
+    marker: HTMLButtonElement | null;
+    iconWrap: HTMLElement | null;
+    wedgePath: SVGPathElement | null;
+    assignedOperatorId: string | null;
+    trackedOperatorId: string | null;
+}
+
+export interface MissionRefs {
+    shell: HTMLElement | null;
+    modeStatus: HTMLElement | null;
+    defenceButton: HTMLButtonElement | null;
+    commercialButton: HTMLButtonElement | null;
+    backToDefenceButton: HTMLButtonElement | null;
+    defenceView: HTMLElement | null;
+    commercialView: HTMLElement | null;
+    stageViewport: HTMLElement | null;
+    stage: HTMLElement | null;
+    mapImage: HTMLImageElement | null;
+    overlaySvg: SVGSVGElement | null;
+    wedgesGroup: SVGGElement | null;
+    polygon: SVGPolygonElement | null;
+    polygonOutline: SVGPolylineElement | null;
+    handlesGroup: SVGGElement | null;
+    operatorsLayer: HTMLElement | null;
+    dronesLayer: HTMLElement | null;
+    cameraTitle: HTMLElement | null;
+    cameraSubtitle: HTMLElement | null;
+    cameraImage: HTMLImageElement | null;
+    telemetryEntity: HTMLElement | null;
+    telemetryAltitude: HTMLElement | null;
+    telemetryBattery: HTMLElement | null;
+    telemetryNeedle: HTMLElement | null;
+    telemetryRtb: HTMLElement | null;
+    telemetryRange: HTMLElement | null;
+    telemetryEndurance: HTMLElement | null;
+    operatorFocus: HTMLElement | null;
+}
+
+export interface MissionConfig extends Record<string, unknown> {
+    map: {
+        width: number;
+        height: number;
+    };
+}
+
+export interface MissionState {
+    mode: 'defence' | 'commercial';
+    polygon: Point[];
+    operators: Operator[];
+    drones: Drone[];
+    selection: Selection | null;
+    dragging: { index: number; pointerId: number; handle: SVGCircleElement } | null;
+    recalcTimeoutId: number | null;
+    coverageIntervalId: number | null;
+    rafId: number | null;
+    lastFrameTime: number;
+    layoutRafId: number | null;
+    layout: LayoutState;
+}
+
+// TODO(types): tighten broad `any` casts used to preserve mission behavior parity during migration.
+export function initMissionDemo(root: HTMLElement): () => void {
     'use strict';
+
+    const doc = root.ownerDocument;
+    const get = <T extends HTMLElement | SVGElement>(id: string): T | null => {
+        const scoped = root.querySelector(`#${id}`);
+        if (scoped) {
+            return scoped as T;
+        }
+        return doc.getElementById(id) as T | null;
+    };
 
     const SVG_NS = 'http://www.w3.org/2000/svg';
     const TAU = Math.PI * 2;
 
-    const MISSION_DEFENCE_CONFIG = {
+    const MISSION_DEFENCE_CONFIG: any = {
         layout: {
             baseWidth: 1600,
             baseHeight: 900,
@@ -23,8 +129,8 @@
             height: 900
         },
         assets: {
-            desertMap: 'desert-map-1.jpg',
-            droneFeed: 'assets/drone-image-1.jpg'
+            desertMap: ASSETS.desertMap,
+            droneFeed: ASSETS.droneFeed
         },
         operators: [
             { id: 'OP-1', x: 340, y: 290 },
@@ -66,45 +172,45 @@
         }
     };
 
-    const refs = {
-        shell: document.getElementById('mission-shell'),
-        modeStatus: document.getElementById('mission-mode-status'),
-        defenceButton: document.getElementById('mission-mode-defence'),
-        commercialButton: document.getElementById('mission-mode-commercial'),
-        backToDefenceButton: document.getElementById('mission-back-defence'),
-        defenceView: document.getElementById('mission-defence-view'),
-        commercialView: document.getElementById('mission-commercial-view'),
-        stageViewport: document.getElementById('mission-stage-viewport'),
-        stage: document.getElementById('mission-stage'),
-        mapImage: document.getElementById('mission-map-image'),
-        overlaySvg: document.getElementById('mission-overlay-svg'),
-        wedgesGroup: document.getElementById('mission-camera-wedges'),
-        polygon: document.getElementById('mission-polygon'),
-        polygonOutline: document.getElementById('mission-polygon-outline'),
-        handlesGroup: document.getElementById('mission-polygon-handles'),
-        operatorsLayer: document.getElementById('mission-operators-layer'),
-        dronesLayer: document.getElementById('mission-drones-layer'),
-        cameraTitle: document.getElementById('mission-camera-title'),
-        cameraSubtitle: document.getElementById('mission-camera-subtitle'),
-        cameraImage: document.getElementById('mission-camera-image'),
-        telemetryEntity: document.getElementById('telemetry-entity'),
-        telemetryAltitude: document.getElementById('telemetry-altitude'),
-        telemetryBattery: document.getElementById('telemetry-battery-text'),
-        telemetryNeedle: document.getElementById('telemetry-battery-needle'),
-        telemetryRtb: document.getElementById('telemetry-rtb'),
-        telemetryRange: document.getElementById('telemetry-range'),
-        telemetryEndurance: document.getElementById('telemetry-endurance'),
-        operatorFocus: document.getElementById('mission-operator-focus')
+    const refs: any = {
+        shell: get<HTMLElement>('mission-shell'),
+        modeStatus: get<HTMLElement>('mission-mode-status'),
+        defenceButton: get<HTMLButtonElement>('mission-mode-defence'),
+        commercialButton: get<HTMLButtonElement>('mission-mode-commercial'),
+        backToDefenceButton: get<HTMLButtonElement>('mission-back-defence'),
+        defenceView: get<HTMLElement>('mission-defence-view'),
+        commercialView: get<HTMLElement>('mission-commercial-view'),
+        stageViewport: get<HTMLElement>('mission-stage-viewport'),
+        stage: get<HTMLElement>('mission-stage'),
+        mapImage: get<HTMLImageElement>('mission-map-image'),
+        overlaySvg: get<SVGSVGElement>('mission-overlay-svg'),
+        wedgesGroup: get<SVGGElement>('mission-camera-wedges'),
+        polygon: get<SVGPolygonElement>('mission-polygon'),
+        polygonOutline: get<SVGPolylineElement>('mission-polygon-outline'),
+        handlesGroup: get<SVGGElement>('mission-polygon-handles'),
+        operatorsLayer: get<HTMLElement>('mission-operators-layer'),
+        dronesLayer: get<HTMLElement>('mission-drones-layer'),
+        cameraTitle: get<HTMLElement>('mission-camera-title'),
+        cameraSubtitle: get<HTMLElement>('mission-camera-subtitle'),
+        cameraImage: get<HTMLImageElement>('mission-camera-image'),
+        telemetryEntity: get<HTMLElement>('telemetry-entity'),
+        telemetryAltitude: get<HTMLElement>('telemetry-altitude'),
+        telemetryBattery: get<HTMLElement>('telemetry-battery-text'),
+        telemetryNeedle: get<HTMLElement>('telemetry-battery-needle'),
+        telemetryRtb: get<HTMLElement>('telemetry-rtb'),
+        telemetryRange: get<HTMLElement>('telemetry-range'),
+        telemetryEndurance: get<HTMLElement>('telemetry-endurance'),
+        operatorFocus: get<HTMLElement>('mission-operator-focus')
     };
 
     if (!refs.shell || !refs.stage || !refs.stageViewport || !refs.overlaySvg) {
-        return;
+        return () => {};
     }
 
-    const state = {
+    const state: any = {
         mode: 'defence',
-        polygon: MISSION_DEFENCE_CONFIG.polygon.map((point) => ({ x: point.x, y: point.y })),
-        operators: MISSION_DEFENCE_CONFIG.operators.map((operator) => ({ ...operator, element: null })),
+        polygon: MISSION_DEFENCE_CONFIG.polygon.map((point: Point) => ({ x: point.x, y: point.y })),
+        operators: MISSION_DEFENCE_CONFIG.operators.map((operator: { id: string; x: number; y: number }) => ({ ...operator, element: null })),
         drones: [],
         selection: null,
         dragging: null,
@@ -263,7 +369,7 @@
         refs.polygon.setAttribute('points', points.join(' '));
         refs.polygonOutline.setAttribute('points', `${points.join(' ')} ${points[0]}`);
 
-        Array.from(refs.handlesGroup.children).forEach((handle, index) => {
+        Array.from(refs.handlesGroup.children as HTMLCollectionOf<SVGCircleElement>).forEach((handle: SVGCircleElement, index: number) => {
             const point = state.polygon[index];
             handle.setAttribute('cx', String(point.x));
             handle.setAttribute('cy', String(point.y));
@@ -315,7 +421,7 @@
             const batteryBase = 96.5 + Math.random() * 2;
             const assignedOperator = state.operators[i % state.operators.length] || null;
             const cruiseSpeedPxPerSec = MISSION_DEFENCE_CONFIG.sim.cruiseSpeedPxPerSec + i * 1.4;
-            const drone = {
+            const drone: any = {
                 id: `DR-${i + 1}`,
                 x: spawn.x,
                 y: spawn.y,
@@ -384,7 +490,7 @@
                 setSelection({ type: 'drone', id: drone.id });
             });
             drone.marker = marker;
-            drone.iconWrap = marker.querySelector('.uav-icon-wrap');
+            drone.iconWrap = marker.querySelector('.uav-icon-wrap') as HTMLElement | null;
             refs.dronesLayer.appendChild(marker);
 
             const wedgePath = document.createElementNS(SVG_NS, 'path');
@@ -397,7 +503,7 @@
     }
 
     function recalculateCoverageTargets(forceReseed) {
-        const samples = samplePointsInsidePolygon(state.polygon, 130);
+        const samples: any[] = samplePointsInsidePolygon(state.polygon, 130);
         if (samples.length === 0) {
             return;
         }
@@ -413,7 +519,7 @@
         }
 
         for (let iteration = 0; iteration < 4; iteration += 1) {
-            const clusters = Array.from({ length: droneCount }, () => []);
+            const clusters: any[][] = Array.from({ length: droneCount }, () => []);
 
             samples.forEach((sample) => {
                 let closestIndex = 0;
@@ -464,7 +570,7 @@
 
     function samplePointsInsidePolygon(polygon, step) {
         const bounds = polygonBounds(polygon);
-        const samples = [];
+        const samples: any[] = [];
 
         for (let y = bounds.minY; y <= bounds.maxY; y += step) {
             const rowOffset = (Math.floor((y - bounds.minY) / step) % 2) * (step * 0.35);
@@ -722,7 +828,7 @@
             0
         ];
         const distanceScales = [1, 0.9, 0.78, 0.64, 0.5];
-        let bestOutsideStep = null;
+        let bestOutsideStep: any = null;
         let bestOutsideScore = Number.POSITIVE_INFINITY;
 
         for (let i = 0; i < turnTrials.length; i += 1) {
@@ -967,7 +1073,7 @@
 
     function nearestOperatorForDrone(drone, operatorsPool) {
         const candidates = Array.isArray(operatorsPool) ? operatorsPool : state.operators;
-        let closest = null;
+        let closest: any = null;
         let closestDistance = Number.POSITIVE_INFINITY;
 
         candidates.forEach((operator) => {
@@ -1006,7 +1112,7 @@
     }
 
     function nearestOperatorToPoint(point, operators) {
-        let closest = null;
+        let closest: any = null;
         let closestDistance = Number.POSITIVE_INFINITY;
 
         operators.forEach((operator) => {
@@ -1030,7 +1136,7 @@
     }
 
     function nearestDroneForOperator(operator) {
-        let closest = null;
+        let closest: any = null;
         let closestDistance = Number.POSITIVE_INFINITY;
 
         state.drones.forEach((drone) => {
@@ -1335,4 +1441,21 @@
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
     }
-})();
+    return () => {
+        if (state.coverageIntervalId !== null) {
+            window.clearInterval(state.coverageIntervalId);
+        }
+        if (state.rafId !== null) {
+            window.cancelAnimationFrame(state.rafId);
+        }
+        if (state.recalcTimeoutId !== null) {
+            window.clearTimeout(state.recalcTimeoutId);
+        }
+        if (state.layoutRafId !== null) {
+            window.cancelAnimationFrame(state.layoutRafId);
+        }
+
+        window.removeEventListener('resize', handleWindowResize);
+        window.removeEventListener('orientationchange', handleWindowResize);
+    };
+}
