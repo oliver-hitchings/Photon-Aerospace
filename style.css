@@ -296,6 +296,24 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .team-name { font-size: 2rem; color: var(--headline-color); }
 .team-role { color: var(--primary-color); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
 .team-bio { font-weight: 300; }
+.team-linkedin {
+    display: inline-block;
+    margin-top: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.team-linkedin:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+.team-linkedin-icon {
+    width: 34px;
+    height: 34px;
+    display: block;
+    fill: #0a66c2;
+}
 .advisory-title { font-size: 2rem; margin-top: 5rem; margin-bottom: 2rem; color: var(--headline-color); text-align: center; }
 .advisor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1000px; margin: 0 auto; }
 .advisor-card { 
