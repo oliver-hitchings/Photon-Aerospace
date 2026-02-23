@@ -44,12 +44,25 @@
             cameraRangePx: 470,
             fovDeg: 48,
             iconScale: 1,
-            headingSmoothing: 0.05
+            gimbalTurnDegPerSec: 52
         },
         sim: {
-            targetRefreshMs: 1200,
-            dragRecalcMs: 130,
-            speedPxPerSec: 76
+            targetRefreshMs: 4200,
+            dragRecalcMs: 850,
+            cruiseSpeedPxPerSec: 46,
+            turnRateDegPerSec: 12,
+            boundaryAdaptPerSec: 0.2,
+            accelPxPerSec2: 1.2,
+            decelPxPerSec2: 1.9,
+            turnSpeedLoss: 0.14,
+            minTurnRadiusPx: 120,
+            wallBufferPx: 72,
+            climbRateMps: 2.1,
+            descentRateMps: 1.8,
+            verticalAccelMps2: 0.42,
+            altitudeBandM: 340,
+            operatorRetaskMinSec: 18,
+            operatorRetaskMaxSec: 34
         }
     };
 
@@ -242,7 +255,7 @@
         }
 
         state.dragging = null;
-        recalculateCoverageTargets(false);
+        scheduleCoverageRecalculation();
     }
 
     function renderPolygon() {
@@ -296,17 +309,50 @@
         state.drones = [];
         for (let i = 0; i < MISSION_DEFENCE_CONFIG.drone.count; i += 1) {
             const spawn = randomPointInPolygon(state.polygon, i + 1);
+            const baseAltitude = 1900 + i * 270;
+            const nominalSpeedKmh = 42 + i * 2.8;
+            const enduranceHours = 24 + i * 2.9;
+            const batteryBase = 96.5 + Math.random() * 2;
+            const assignedOperator = state.operators[i % state.operators.length] || null;
+            const cruiseSpeedPxPerSec = MISSION_DEFENCE_CONFIG.sim.cruiseSpeedPxPerSec + i * 1.4;
             const drone = {
                 id: `DR-${i + 1}`,
                 x: spawn.x,
                 y: spawn.y,
                 target: { x: spawn.x, y: spawn.y },
+                coverageAnchor: { x: spawn.x, y: spawn.y },
                 heading: Math.random() * TAU,
+                cameraHeading: Math.random() * TAU,
                 phase: Math.random() * TAU,
-                baseAltitude: 190 + i * 27,
-                speedKmh: 42 + i * 2.8,
-                enduranceHours: 24 + i * 2.9,
-                batteryBase: 96.5 + Math.random() * 2,
+                baseAltitude,
+                nominalSpeedKmh,
+                speedKmh: nominalSpeedKmh,
+                enduranceHours,
+                batteryBase,
+                altitude: baseAltitude,
+                targetAltitude: baseAltitude + (seededRandom(i + 41) - 0.5) * MISSION_DEFENCE_CONFIG.sim.altitudeBandM,
+                verticalSpeedMps: 0,
+                maxClimbMps: MISSION_DEFENCE_CONFIG.sim.climbRateMps + i * 0.07,
+                maxDescentMps: MISSION_DEFENCE_CONFIG.sim.descentRateMps + i * 0.07,
+                verticalAccelMps2: MISSION_DEFENCE_CONFIG.sim.verticalAccelMps2 + i * 0.02,
+                battery: batteryBase,
+                range20: nominalSpeedKmh * (20 / 60),
+                endurance: enduranceHours,
+                cruiseSpeedPxPerSec,
+                airspeedPxPerSec: cruiseSpeedPxPerSec,
+                targetAirspeedPxPerSec: cruiseSpeedPxPerSec,
+                minSpeedPxPerSec: cruiseSpeedPxPerSec * 0.76,
+                maxSpeedPxPerSec: cruiseSpeedPxPerSec * 1.08,
+                accelPxPerSec2: MISSION_DEFENCE_CONFIG.sim.accelPxPerSec2 + i * 0.15,
+                decelPxPerSec2: MISSION_DEFENCE_CONFIG.sim.decelPxPerSec2 + i * 0.2,
+                turnRateRadPerSec: ((MISSION_DEFENCE_CONFIG.sim.turnRateDegPerSec + i * 0.45) * Math.PI) / 180,
+                minTurnRadiusPx: MISSION_DEFENCE_CONFIG.sim.minTurnRadiusPx + i * 8,
+                orbitRadius: 120 + (i % 3) * 34,
+                orbitRate: 0.072 + i * 0.006,
+                orbitDirection: i % 2 === 0 ? 1 : -1,
+                retaskStep: (i % 2) + 1,
+                assignedOperatorId: assignedOperator ? assignedOperator.id : null,
+                nextRetaskAt: performance.now() + (12 + i * 2.7) * 1000,
                 marker: null,
                 iconWrap: null,
                 wedgePath: null,
@@ -321,13 +367,14 @@
             marker.style.top = `${drone.y}px`;
             marker.innerHTML = `
                 <span class="uav-icon-wrap" aria-hidden="true">
-                    <svg class="uav-icon" viewBox="0 0 48 48" focusable="false">
-                        <path class="uav-shadow" d="M24 7 L19 14 L15 20 L7 23 L7 25 L15 28 L19 34 L24 41 L29 34 L33 28 L41 25 L41 23 L33 20 L29 14 Z"></path>
-                        <path class="uav-wing" d="M9 23 L20 20 L20 28 L9 25 Z"></path>
-                        <path class="uav-wing" d="M39 23 L28 20 L28 28 L39 25 Z"></path>
-                        <path class="uav-tail" d="M21 34 L18 39 L24 41 L30 39 L27 34 Z"></path>
-                        <path class="uav-body" d="M24 9 L20 16 L20 31 L24 39 L28 31 L28 16 Z"></path>
-                        <circle class="uav-sensor" cx="24" cy="13.5" r="2"></circle>
+                    <svg class="uav-icon" viewBox="0 0 64 64" focusable="false">
+                        <ellipse class="uav-shadow" cx="32" cy="35" rx="23" ry="16"></ellipse>
+                        <path class="uav-wing" d="M4 31 L24 27 L40 27 L60 31 L60 33 L40 37 L24 37 L4 33 Z"></path>
+                        <path class="uav-wing-detail" d="M8 32 L24 29.4 L40 29.4 L56 32 L40 34.6 L24 34.6 Z"></path>
+                        <path class="uav-tail" d="M22 46 L42 46 L39 52 L25 52 Z"></path>
+                        <path class="uav-tail-fin" d="M30 50 L27 58 L32 55.5 L37 58 L34 50 Z"></path>
+                        <path class="uav-body" d="M32 6 L29 13 L29 44 L32 53 L35 44 L35 13 Z"></path>
+                        <circle class="uav-sensor" cx="32" cy="11.5" r="2.2"></circle>
                     </svg>
                 </span>
                 <span class="drone-label">${drone.id}</span>
@@ -486,48 +533,154 @@
 
     function updateDroneStates(now, deltaSeconds) {
         const timeSeconds = now * 0.001;
+        const activeOperators = operatorsInsidePolygon();
 
         state.drones.forEach((drone, index) => {
-            const driftX = Math.cos(timeSeconds * 0.8 + drone.phase) * 8;
-            const driftY = Math.sin(timeSeconds * 0.68 + drone.phase * 0.9) * 5;
+            const boundaryBlend = clamp(MISSION_DEFENCE_CONFIG.sim.boundaryAdaptPerSec * deltaSeconds, 0.001, 1);
+            drone.coverageAnchor.x += (drone.target.x - drone.coverageAnchor.x) * boundaryBlend;
+            drone.coverageAnchor.y += (drone.target.y - drone.coverageAnchor.y) * boundaryBlend;
 
+            if (activeOperators.length) {
+                const assignedStillValid = activeOperators.some((operator) => operator.id === drone.assignedOperatorId);
+                if (!assignedStillValid || now >= drone.nextRetaskAt) {
+                    drone.assignedOperatorId = chooseNextOperatorId(drone, activeOperators);
+                    drone.nextRetaskAt = now + nextRetaskDelayMs(drone, index, now);
+                    const altitudeSeed = now * 0.0011 + index * 3.7 + drone.phase;
+                    drone.targetAltitude = drone.baseAltitude
+                        + (seededRandom(altitudeSeed) - 0.5) * MISSION_DEFENCE_CONFIG.sim.altitudeBandM;
+                }
+            } else {
+                drone.assignedOperatorId = null;
+            }
+
+            const assignedOperator = activeOperators.find((operator) => operator.id === drone.assignedOperatorId) || null;
+            const loiterCenter = assignedOperator
+                ? {
+                    x: drone.coverageAnchor.x * 0.58 + assignedOperator.x * 0.42,
+                    y: drone.coverageAnchor.y * 0.58 + assignedOperator.y * 0.42
+                }
+                : {
+                    x: drone.coverageAnchor.x,
+                    y: drone.coverageAnchor.y
+                };
+
+            const loiterAngle = timeSeconds * drone.orbitRate * drone.orbitDirection + drone.phase;
             let desired = {
-                x: drone.target.x + driftX,
-                y: drone.target.y + driftY
+                x: loiterCenter.x + Math.cos(loiterAngle) * drone.orbitRadius,
+                y: loiterCenter.y + Math.sin(loiterAngle) * drone.orbitRadius * 0.72
             };
 
             if (!isPointInsidePolygon(desired, state.polygon)) {
-                desired = { x: drone.target.x, y: drone.target.y };
+                desired = moveTowardInside(desired, drone.coverageAnchor, state.polygon);
             }
 
-            const speed = MISSION_DEFENCE_CONFIG.sim.speedPxPerSec + index * 5;
-            const dx = desired.x - drone.x;
-            const dy = desired.y - drone.y;
-            const distance = Math.hypot(dx, dy);
-            const stepDistance = Math.min(speed * deltaSeconds, distance);
+            const isInsidePolygon = isPointInsidePolygon(drone, state.polygon);
+            const rejoinPoint = isInsidePolygon ? null : rejoinPointForDrone(drone, state.polygon);
+            const desiredHeading = rejoinPoint
+                ? Math.atan2(rejoinPoint.y - drone.y, rejoinPoint.x - drone.x)
+                : Math.atan2(desired.y - drone.y, desired.x - drone.x);
+            const edgeInfo = nearestPolygonEdgeInfo(drone, state.polygon);
+            const lookAheadDistance = Math.max(28, drone.airspeedPxPerSec * 2.2);
+            const lookAheadPoint = {
+                x: drone.x + Math.cos(drone.heading) * lookAheadDistance,
+                y: drone.y + Math.sin(drone.heading) * lookAheadDistance
+            };
 
-            if (distance > 0.01) {
-                drone.x += (dx / distance) * stepDistance;
-                drone.y += (dy / distance) * stepDistance;
+            const nearBoundary = isInsidePolygon && edgeInfo.distance < MISSION_DEFENCE_CONFIG.sim.wallBufferPx;
+            const projectedOutside = isInsidePolygon && !isPointInsidePolygon(lookAheadPoint, state.polygon);
+            let guidanceHeading = desiredHeading;
+
+            if (nearBoundary || projectedOutside) {
+                const avoidHeading = Math.atan2(edgeInfo.awayY, edgeInfo.awayX);
+                const edgePressure = clamp(
+                    (MISSION_DEFENCE_CONFIG.sim.wallBufferPx - edgeInfo.distance) / MISSION_DEFENCE_CONFIG.sim.wallBufferPx,
+                    0,
+                    1
+                );
+                const avoidBlend = projectedOutside ? 0.88 : 0.42 + edgePressure * 0.46;
+                guidanceHeading = lerpAngle(desiredHeading, avoidHeading, clamp(avoidBlend, 0, 0.95));
             }
 
-            if (!isPointInsidePolygon(drone, state.polygon)) {
-                const corrected = moveTowardInside(drone, drone.target, state.polygon);
-                drone.x = corrected.x;
-                drone.y = corrected.y;
+            const rawHeadingError = normalizeAngle(guidanceHeading - drone.heading);
+            const turnIntensity = clamp(Math.abs(rawHeadingError) / Math.PI, 0, 1);
+            const speedLoss = MISSION_DEFENCE_CONFIG.sim.turnSpeedLoss * turnIntensity;
+            drone.targetAirspeedPxPerSec = clamp(
+                drone.cruiseSpeedPxPerSec * (1 - speedLoss),
+                drone.minSpeedPxPerSec,
+                drone.maxSpeedPxPerSec
+            );
+
+            const speedError = drone.targetAirspeedPxPerSec - drone.airspeedPxPerSec;
+            const speedRateLimit = (speedError >= 0 ? drone.accelPxPerSec2 : drone.decelPxPerSec2) * deltaSeconds;
+            drone.airspeedPxPerSec += clamp(speedError, -speedRateLimit, speedRateLimit);
+            drone.airspeedPxPerSec = clamp(drone.airspeedPxPerSec, drone.minSpeedPxPerSec, drone.maxSpeedPxPerSec);
+
+            const travel = drone.airspeedPxPerSec * deltaSeconds;
+            const maxTurnFromRate = drone.turnRateRadPerSec * deltaSeconds;
+            const maxTurnFromRadius = travel / Math.max(1, drone.minTurnRadiusPx);
+            const maxTurn = Math.max(0.001, Math.min(maxTurnFromRate, maxTurnFromRadius));
+
+            const previousHeading = drone.heading;
+            const movementGoal = rejoinPoint || desired;
+            let forwardStep = planForwardStep(drone, guidanceHeading, maxTurn, travel, state.polygon, {
+                allowOutside: !isInsidePolygon,
+                goalPoint: movementGoal
+            });
+
+            if (!forwardStep) {
+                const recoveryHeading = rejoinPoint
+                    ? Math.atan2(rejoinPoint.y - drone.y, rejoinPoint.x - drone.x)
+                    : Math.atan2(edgeInfo.awayY, edgeInfo.awayX);
+                forwardStep = planForwardStep(
+                    drone,
+                    recoveryHeading,
+                    maxTurn,
+                    travel * (isInsidePolygon ? 0.82 : 0.92),
+                    state.polygon,
+                    {
+                        allowOutside: true,
+                        goalPoint: movementGoal
+                    }
+                );
             }
 
-            const trackedOperator = nearestOperatorForDrone(drone);
+            if (forwardStep) {
+                drone.heading = forwardStep.heading;
+                drone.x = forwardStep.x;
+                drone.y = forwardStep.y;
+            } else {
+                drone.heading = previousHeading;
+                const emergencyStep = travel * 0.35;
+                if (emergencyStep > 0.01) {
+                    drone.x += Math.cos(drone.heading) * emergencyStep;
+                    drone.y += Math.sin(drone.heading) * emergencyStep;
+                }
+            }
+
+            drone.x = clamp(drone.x, 0, MISSION_DEFENCE_CONFIG.map.width);
+            drone.y = clamp(drone.y, 0, MISSION_DEFENCE_CONFIG.map.height);
+
+            const trackedOperator = nearestOperatorForDrone(drone, activeOperators);
             drone.trackedOperatorId = trackedOperator ? trackedOperator.id : null;
 
-            const directionTarget = trackedOperator || drone.target;
-            const desiredHeading = Math.atan2(directionTarget.y - drone.y, directionTarget.x - drone.x);
-            drone.heading = lerpAngle(drone.heading, desiredHeading, MISSION_DEFENCE_CONFIG.drone.headingSmoothing);
+            const cameraTarget = trackedOperator || assignedOperator || desired;
+            const desiredCameraHeading = Math.atan2(cameraTarget.y - drone.y, cameraTarget.x - drone.x);
+            const maxGimbalTurn = ((MISSION_DEFENCE_CONFIG.drone.gimbalTurnDegPerSec * Math.PI) / 180) * deltaSeconds;
+            const gimbalError = normalizeAngle(desiredCameraHeading - drone.cameraHeading);
+            drone.cameraHeading = normalizeAngle(drone.cameraHeading + clamp(gimbalError, -maxGimbalTurn, maxGimbalTurn));
 
-            drone.altitude = drone.baseAltitude + Math.sin(timeSeconds * 0.7 + drone.phase) * 18;
+            const altitudeError = drone.targetAltitude - drone.altitude;
+            const desiredVerticalSpeed = clamp(altitudeError * 0.022, -drone.maxDescentMps, drone.maxClimbMps);
+            const verticalSpeedError = desiredVerticalSpeed - drone.verticalSpeedMps;
+            const verticalRateLimit = drone.verticalAccelMps2 * deltaSeconds;
+            drone.verticalSpeedMps += clamp(verticalSpeedError, -verticalRateLimit, verticalRateLimit);
+            drone.altitude += drone.verticalSpeedMps * deltaSeconds;
+
+            const speedRatio = drone.airspeedPxPerSec / drone.cruiseSpeedPxPerSec;
+            drone.speedKmh = drone.nominalSpeedKmh * speedRatio;
             drone.battery = drone.batteryBase + Math.sin(timeSeconds * 0.19 + drone.phase) * 1.1;
             drone.range20 = drone.speedKmh * (20 / 60);
-            drone.endurance = drone.enduranceHours + Math.sin(timeSeconds * 0.13 + drone.phase) * 1.8;
+            drone.endurance = drone.enduranceHours + Math.sin(timeSeconds * 0.13 + drone.phase) * 1.2;
         });
     }
 
@@ -548,6 +701,234 @@
         };
     }
 
+    function planForwardStep(drone, desiredHeading, maxTurn, travel, polygon, options) {
+        if (travel <= 0.0001) {
+            return null;
+        }
+
+        const resolvedOptions = options || {};
+        const allowOutside = Boolean(resolvedOptions.allowOutside);
+        const goalPoint = resolvedOptions.goalPoint || null;
+        const currentGoalDistance = goalPoint ? distanceBetween(drone, goalPoint) : Number.POSITIVE_INFINITY;
+        const currentHeading = drone.heading;
+        const desiredTurn = clamp(normalizeAngle(desiredHeading - currentHeading), -maxTurn, maxTurn);
+        const turnSign = desiredTurn === 0 ? 1 : Math.sign(desiredTurn);
+        const turnTrials = [
+            desiredTurn,
+            desiredTurn * 0.72,
+            desiredTurn * 0.42,
+            turnSign * maxTurn * 0.2,
+            -turnSign * maxTurn * 0.2,
+            0
+        ];
+        const distanceScales = [1, 0.9, 0.78, 0.64, 0.5];
+        let bestOutsideStep = null;
+        let bestOutsideScore = Number.POSITIVE_INFINITY;
+
+        for (let i = 0; i < turnTrials.length; i += 1) {
+            const turnDelta = clamp(turnTrials[i], -maxTurn, maxTurn);
+            const heading = normalizeAngle(currentHeading + turnDelta);
+
+            for (let j = 0; j < distanceScales.length; j += 1) {
+                const stepDistance = travel * distanceScales[j];
+                const candidate = {
+                    x: drone.x + Math.cos(heading) * stepDistance,
+                    y: drone.y + Math.sin(heading) * stepDistance
+                };
+
+                if (
+                    candidate.x < -12
+                    || candidate.x > MISSION_DEFENCE_CONFIG.map.width + 12
+                    || candidate.y < -12
+                    || candidate.y > MISSION_DEFENCE_CONFIG.map.height + 12
+                ) {
+                    continue;
+                }
+
+                if (isPointInsidePolygon(candidate, polygon)) {
+                    return {
+                        x: candidate.x,
+                        y: candidate.y,
+                        heading
+                    };
+                }
+
+                if (allowOutside) {
+                    const goalDistance = goalPoint
+                        ? distanceBetween(candidate, goalPoint)
+                        : nearestPolygonEdgeInfo(candidate, polygon).distance;
+                    const progressPenalty = Number.isFinite(currentGoalDistance)
+                        ? Math.max(0, goalDistance - currentGoalDistance) * 3.1
+                        : 0;
+                    const turnPenalty = Math.abs(turnDelta) * 16;
+                    const shortStepPenalty = (1 - distanceScales[j]) * 18;
+                    const score = goalDistance + progressPenalty + turnPenalty + shortStepPenalty;
+
+                    if (score < bestOutsideScore) {
+                        bestOutsideScore = score;
+                        bestOutsideStep = {
+                            x: candidate.x,
+                            y: candidate.y,
+                            heading
+                        };
+                    }
+                }
+            }
+        }
+
+        if (allowOutside && bestOutsideStep) {
+            return bestOutsideStep;
+        }
+
+        return null;
+    }
+
+    function rejoinPointForDrone(drone, polygon) {
+        const nearestBoundary = closestPointOnPolygon(drone, polygon);
+        const edgeInfo = nearestPolygonEdgeInfo(drone, polygon);
+        const inwardProbe = {
+            x: nearestBoundary.x - edgeInfo.awayX * 34,
+            y: nearestBoundary.y - edgeInfo.awayY * 34
+        };
+
+        if (isPointInsidePolygon(inwardProbe, polygon)) {
+            return inwardProbe;
+        }
+
+        const preferredInsideTarget = resolveInsideReferencePoint(drone, polygon, nearestBoundary);
+        return moveTowardInside(nearestBoundary, preferredInsideTarget, polygon);
+    }
+
+    function resolveInsideReferencePoint(drone, polygon, nearestBoundary) {
+        if (isPointInsidePolygon(drone.coverageAnchor, polygon)) {
+            return {
+                x: drone.coverageAnchor.x,
+                y: drone.coverageAnchor.y
+            };
+        }
+
+        if (isPointInsidePolygon(drone.target, polygon)) {
+            return {
+                x: drone.target.x,
+                y: drone.target.y
+            };
+        }
+
+        const samples = samplePointsInsidePolygon(polygon, 95).filter((sample) => isPointInsidePolygon(sample, polygon));
+        if (samples.length) {
+            return nearestPoint(nearestBoundary, samples);
+        }
+
+        const centroid = polygonCentroid(polygon);
+        if (isPointInsidePolygon(centroid, polygon)) {
+            return centroid;
+        }
+
+        return {
+            x: clamp(nearestBoundary.x, 1, MISSION_DEFENCE_CONFIG.map.width - 1),
+            y: clamp(nearestBoundary.y, 1, MISSION_DEFENCE_CONFIG.map.height - 1)
+        };
+    }
+
+    function closestPointOnPolygon(point, polygon) {
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        let nearestX = point.x;
+        let nearestY = point.y;
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+            const segmentStart = polygon[j];
+            const segmentEnd = polygon[i];
+            const candidate = nearestPointOnSegment(point, segmentStart, segmentEnd);
+            const distance = distanceBetween(point, candidate);
+
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestX = candidate.x;
+                nearestY = candidate.y;
+            }
+        }
+
+        return {
+            x: nearestX,
+            y: nearestY,
+            distance: nearestDistance
+        };
+    }
+
+    function nearestPolygonEdgeInfo(point, polygon) {
+        const nearest = closestPointOnPolygon(point, polygon);
+        const awayX = point.x - nearest.x;
+        const awayY = point.y - nearest.y;
+
+        if (!Number.isFinite(nearest.distance)) {
+            return {
+                distance: Number.POSITIVE_INFINITY,
+                awayX: 0,
+                awayY: -1
+            };
+        }
+
+        if (nearest.distance > 0.001) {
+            return {
+                distance: nearest.distance,
+                awayX: awayX / nearest.distance,
+                awayY: awayY / nearest.distance
+            };
+        }
+
+        const centroid = polygonCentroid(polygon);
+        const fallbackX = centroid.x - point.x;
+        const fallbackY = centroid.y - point.y;
+        const fallbackDistance = Math.hypot(fallbackX, fallbackY) || 1;
+        return {
+            distance: 0,
+            awayX: fallbackX / fallbackDistance,
+            awayY: fallbackY / fallbackDistance
+        };
+    }
+
+    function nearestPointOnSegment(point, segmentStart, segmentEnd) {
+        const segmentX = segmentEnd.x - segmentStart.x;
+        const segmentY = segmentEnd.y - segmentStart.y;
+        const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+
+        if (segmentLengthSquared <= 0.000001) {
+            return { x: segmentStart.x, y: segmentStart.y };
+        }
+
+        const t = clamp(
+            ((point.x - segmentStart.x) * segmentX + (point.y - segmentStart.y) * segmentY) / segmentLengthSquared,
+            0,
+            1
+        );
+
+        return {
+            x: segmentStart.x + segmentX * t,
+            y: segmentStart.y + segmentY * t
+        };
+    }
+
+    function polygonCentroid(polygon) {
+        if (!polygon.length) {
+            return {
+                x: MISSION_DEFENCE_CONFIG.map.width * 0.5,
+                y: MISSION_DEFENCE_CONFIG.map.height * 0.5
+            };
+        }
+
+        const sum = polygon.reduce((accumulator, point) => {
+            return {
+                x: accumulator.x + point.x,
+                y: accumulator.y + point.y
+            };
+        }, { x: 0, y: 0 });
+
+        return {
+            x: sum.x / polygon.length,
+            y: sum.y / polygon.length
+        };
+    }
+
     function renderDroneLayer() {
         const selectedOperatorId = state.selection && state.selection.type === 'operator' ? state.selection.id : null;
 
@@ -565,11 +946,12 @@
                 drone.iconWrap.style.transform = `translate(-50%, -50%) rotate(${headingDegrees.toFixed(1)}deg) scale(${MISSION_DEFENCE_CONFIG.drone.iconScale})`;
             }
 
+            const wedgeHeading = Number.isFinite(drone.cameraHeading) ? drone.cameraHeading : drone.heading;
             const wedgePath = describeWedge(
                 drone.x,
                 drone.y,
                 260,
-                drone.heading,
+                wedgeHeading,
                 (MISSION_DEFENCE_CONFIG.drone.fovDeg * Math.PI) / 180
             );
             drone.wedgePath.setAttribute('d', wedgePath);
@@ -583,11 +965,12 @@
         });
     }
 
-    function nearestOperatorForDrone(drone) {
+    function nearestOperatorForDrone(drone, operatorsPool) {
+        const candidates = Array.isArray(operatorsPool) ? operatorsPool : state.operators;
         let closest = null;
         let closestDistance = Number.POSITIVE_INFINITY;
 
-        state.operators.forEach((operator) => {
+        candidates.forEach((operator) => {
             const insidePolygon = isPointInsidePolygon(operator, state.polygon);
             if (!insidePolygon) {
                 return;
@@ -601,6 +984,49 @@
         });
 
         return closest;
+    }
+
+    function operatorsInsidePolygon() {
+        return state.operators.filter((operator) => isPointInsidePolygon(operator, state.polygon));
+    }
+
+    function chooseNextOperatorId(drone, operators) {
+        if (!operators.length) {
+            return null;
+        }
+
+        const currentIndex = operators.findIndex((operator) => operator.id === drone.assignedOperatorId);
+        if (currentIndex === -1) {
+            const nearest = nearestOperatorToPoint(drone.coverageAnchor, operators);
+            return nearest ? nearest.id : operators[0].id;
+        }
+
+        const nextIndex = (currentIndex + drone.retaskStep) % operators.length;
+        return operators[nextIndex].id;
+    }
+
+    function nearestOperatorToPoint(point, operators) {
+        let closest = null;
+        let closestDistance = Number.POSITIVE_INFINITY;
+
+        operators.forEach((operator) => {
+            const distance = distanceBetween(point, operator);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = operator;
+            }
+        });
+
+        return closest;
+    }
+
+    function nextRetaskDelayMs(drone, index, now) {
+        const minSeconds = MISSION_DEFENCE_CONFIG.sim.operatorRetaskMinSec;
+        const maxSeconds = MISSION_DEFENCE_CONFIG.sim.operatorRetaskMaxSec;
+        const spanSeconds = Math.max(1, maxSeconds - minSeconds);
+        const jitterSeed = (index + 1) * 13.17 + drone.phase * 2.1 + Math.floor(now * 0.001) * 0.07;
+        const jitter = seededRandom(jitterSeed);
+        return (minSeconds + jitter * spanSeconds) * 1000;
     }
 
     function nearestDroneForOperator(operator) {
@@ -641,7 +1067,7 @@
             }
 
             refs.cameraTitle.textContent = `${drone.id} camera`;
-            refs.cameraSubtitle.textContent = `Heading ${Math.round((toDegrees(drone.heading) + 360) % 360)} deg`;
+            refs.cameraSubtitle.textContent = `Gimbal ${Math.round((toDegrees(drone.cameraHeading) + 360) % 360)} deg`;
         } else {
             const operator = findOperator(state.selection.id);
             if (!operator) {
@@ -665,15 +1091,19 @@
         }
 
         refs.telemetryEntity.textContent = telemetryDrone.id;
-        refs.telemetryAltitude.textContent = `${Math.round(telemetryDrone.altitude)} m`;
+        const altitude = Number.isFinite(telemetryDrone.altitude) ? telemetryDrone.altitude : telemetryDrone.baseAltitude;
+        refs.telemetryAltitude.textContent = `${Math.round(altitude)} m`;
 
-        const batteryPercent = clamp(telemetryDrone.battery, 95, 99.5);
+        const batteryValue = Number.isFinite(telemetryDrone.battery) ? telemetryDrone.battery : telemetryDrone.batteryBase;
+        const batteryPercent = clamp(batteryValue, 95, 99.5);
         refs.telemetryBattery.textContent = `${Math.round(batteryPercent)}% (solar hold)`;
         refs.telemetryNeedle.style.left = `${batteryPercent.toFixed(2)}%`;
 
         refs.telemetryRtb.textContent = 'YES';
-        refs.telemetryRange.textContent = `${telemetryDrone.range20.toFixed(1)} km`;
-        refs.telemetryEndurance.textContent = `${telemetryDrone.endurance.toFixed(1)} h`;
+        const range20 = Number.isFinite(telemetryDrone.range20) ? telemetryDrone.range20 : telemetryDrone.speedKmh * (20 / 60);
+        const endurance = Number.isFinite(telemetryDrone.endurance) ? telemetryDrone.endurance : telemetryDrone.enduranceHours;
+        refs.telemetryRange.textContent = `${range20.toFixed(1)} km`;
+        refs.telemetryEndurance.textContent = `${endurance.toFixed(1)} h`;
 
         if (state.selection && state.selection.type === 'operator') {
             const operator = findOperator(state.selection.id);

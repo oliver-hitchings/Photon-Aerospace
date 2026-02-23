@@ -440,11 +440,13 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 
 .drone-marker {
     transform: translate(-50%, -50%);
-    width: 56px;
-    height: 56px;
-    border-radius: 10px;
-    border: 1px solid rgba(186, 199, 209, 0.2);
-    background: rgba(14, 19, 24, 0.2);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid rgba(185, 198, 209, 0.3);
+    background:
+        radial-gradient(circle at 50% 44%, rgba(160, 177, 191, 0.16), rgba(14, 19, 24, 0.16) 68%),
+        rgba(12, 16, 21, 0.24);
     color: #d8e0e6;
     font-size: 0.62rem;
     font-weight: 600;
@@ -452,7 +454,9 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 1px rgba(166, 183, 195, 0.12);
+    box-shadow:
+        0 0 0 1px rgba(166, 183, 195, 0.18),
+        0 8px 18px rgba(0, 0, 0, 0.24);
     transition: transform 0.16s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -461,8 +465,10 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .drone-marker.is-selected {
-    border-color: rgba(223, 233, 240, 0.68);
-    box-shadow: 0 0 0 2px rgba(212, 225, 235, 0.36);
+    border-color: rgba(223, 233, 240, 0.82);
+    box-shadow:
+        0 0 0 2px rgba(212, 225, 235, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .drone-marker.is-targeting-operator {
@@ -473,8 +479,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     transform: translate(-50%, -50%);
     transform-origin: 50% 50%;
 }
@@ -486,34 +492,48 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .uav-shadow {
-    fill: rgba(18, 22, 27, 0.54);
+    fill: rgba(14, 18, 22, 0.34);
 }
 
 .uav-wing {
-    fill: rgba(163, 177, 189, 0.88);
-    stroke: rgba(220, 228, 234, 0.5);
-    stroke-width: 0.55;
+    fill: rgba(176, 190, 201, 0.94);
+    stroke: rgba(225, 233, 239, 0.58);
+    stroke-width: 0.75;
+}
+
+.uav-wing-detail {
+    fill: rgba(137, 153, 165, 0.62);
+    stroke: rgba(200, 214, 224, 0.32);
+    stroke-width: 0.45;
 }
 
 .uav-tail {
-    fill: rgba(147, 162, 173, 0.9);
-    stroke: rgba(211, 220, 226, 0.44);
+    fill: rgba(160, 176, 187, 0.92);
+    stroke: rgba(218, 227, 233, 0.46);
+    stroke-width: 0.55;
+}
+
+.uav-tail-fin {
+    fill: rgba(152, 166, 176, 0.92);
+    stroke: rgba(222, 230, 235, 0.44);
     stroke-width: 0.5;
 }
 
 .uav-body {
-    fill: rgba(190, 202, 212, 0.94);
-    stroke: rgba(233, 238, 242, 0.52);
-    stroke-width: 0.65;
+    fill: rgba(202, 213, 222, 0.95);
+    stroke: rgba(239, 244, 247, 0.62);
+    stroke-width: 0.72;
 }
 
 .uav-sensor {
-    fill: rgba(239, 214, 155, 0.86);
+    fill: rgba(202, 225, 242, 0.92);
+    stroke: rgba(240, 246, 250, 0.6);
+    stroke-width: 0.4;
 }
 
 .drone-label {
     position: absolute;
-    top: 43px;
+    top: 46px;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
@@ -850,17 +870,17 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 
     .drone-marker {
-        width: 50px;
-        height: 50px;
+        width: 54px;
+        height: 54px;
     }
 
     .uav-icon-wrap {
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
     }
 
     .drone-label {
-        top: 39px;
+        top: 42px;
     }
 }
 
@@ -909,17 +929,17 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 
     .drone-marker {
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
     }
 
     .uav-icon-wrap {
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
     }
 
     .drone-label {
-        top: 35px;
+        top: 38px;
         font-size: 0.52rem;
     }
 
