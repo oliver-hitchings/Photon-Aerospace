@@ -146,6 +146,666 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 }
 
 .roadmap-bg { background-color: var(--background-color); }
+
+/* --- Mission Demo (Roadmap Replacement) --- */
+.mission-roadmap {
+    min-height: auto;
+    align-items: stretch;
+}
+
+.mission-roadmap::before {
+    background-color: rgba(6, 10, 15, 0.9);
+}
+
+.mission-roadmap-container {
+    width: min(100%, 1840px);
+    max-width: none;
+    padding: 0;
+    text-align: left;
+}
+
+.mission-section-title {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.mission-scroll-shell {
+    position: relative;
+    height: 230vh;
+}
+
+.mission-sticky-panel {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding-bottom: 0;
+}
+
+.mission-shell {
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background:
+        radial-gradient(circle at 15% 5%, rgba(0, 170, 255, 0.16), transparent 30%),
+        linear-gradient(180deg, rgba(8, 13, 18, 0.94), rgba(4, 8, 12, 0.94));
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+}
+
+.mission-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(7, 12, 18, 0.88);
+}
+
+.mission-toolbar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.mission-subtitle {
+    font-size: 1.35rem;
+    letter-spacing: 0.08em;
+}
+
+.mission-status {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(201, 209, 217, 0.9);
+}
+
+.mission-mode-toggle {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.mission-mode-button {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(20, 28, 36, 0.8);
+    color: var(--text-color);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.mission-mode-button:hover {
+    border-color: rgba(0, 170, 255, 0.85);
+}
+
+.mission-mode-button.is-active {
+    background-color: var(--primary-color);
+    color: #081018;
+    border-color: var(--primary-color);
+    font-weight: 700;
+}
+
+.mission-main {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+}
+
+.mission-defence-view {
+    position: relative;
+    height: 100%;
+    background-color: #05080d;
+}
+
+.mission-stage-scroll {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    padding: 1rem;
+    touch-action: pan-x pan-y;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 170, 255, 0.65) rgba(255, 255, 255, 0.08);
+}
+
+.mission-stage {
+    position: relative;
+    width: 1600px;
+    height: 900px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+    background-color: #111822;
+}
+
+#mission-map-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+#mission-overlay-svg,
+#mission-operators-layer,
+#mission-drones-layer {
+    position: absolute;
+    inset: 0;
+}
+
+#mission-overlay-svg {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#mission-polygon {
+    fill: rgba(0, 170, 255, 0.1);
+    stroke: rgba(100, 210, 255, 0.92);
+    stroke-width: 2;
+    filter: url(#missionGlow);
+}
+
+#mission-polygon-outline {
+    fill: none;
+    stroke: rgba(210, 238, 255, 0.7);
+    stroke-width: 1.5;
+    stroke-dasharray: 7 7;
+}
+
+.polygon-handle {
+    fill: #d7ecff;
+    stroke: rgba(0, 170, 255, 0.92);
+    stroke-width: 2;
+    cursor: grab;
+    pointer-events: all;
+    touch-action: none;
+}
+
+.polygon-handle.is-dragging {
+    cursor: grabbing;
+}
+
+.camera-wedge {
+    fill: rgba(0, 170, 255, 0.2);
+    stroke: rgba(156, 222, 255, 0.8);
+    stroke-width: 1.2;
+    pointer-events: none;
+}
+
+#mission-operators-layer,
+#mission-drones-layer {
+    pointer-events: none;
+}
+
+.operator-pin,
+.drone-marker {
+    position: absolute;
+    pointer-events: all;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+}
+
+.operator-pin {
+    transform: translate(-50%, -100%);
+    width: 36px;
+    height: 46px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.operator-pin-core {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.82);
+    background: rgba(9, 14, 20, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b9e7ff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.25), 0 0 12px rgba(0, 170, 255, 0.5);
+}
+
+.operator-pin-core::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    background: rgba(9, 14, 20, 0.95);
+    border-right: 2px solid rgba(255, 255, 255, 0.75);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.75);
+}
+
+.operator-pin-label {
+    margin-top: 6px;
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #d9e9f7;
+    background: rgba(6, 9, 14, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.operator-pin.is-selected .operator-pin-core {
+    border-color: #6fd6ff;
+    box-shadow: 0 0 0 2px rgba(111, 214, 255, 0.35), 0 0 18px rgba(0, 170, 255, 0.75);
+}
+
+.drone-marker {
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: radial-gradient(circle at 30% 30%, #d2f0ff, #1285b3);
+    color: #041119;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.42), 0 0 14px rgba(0, 170, 255, 0.42);
+    transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.drone-marker:hover {
+    transform: translate(-50%, -50%) scale(1.06);
+}
+
+.drone-marker.is-selected {
+    border-color: #c9f0ff;
+    box-shadow: 0 0 0 2px rgba(143, 219, 255, 0.45), 0 0 20px rgba(0, 170, 255, 0.85);
+}
+
+.drone-marker.is-targeting-operator {
+    box-shadow: 0 0 0 2px rgba(255, 188, 91, 0.36), 0 0 16px rgba(255, 188, 91, 0.65);
+}
+
+.drone-label {
+    position: absolute;
+    top: 31px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 0.56rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #d6e2ef;
+    background: rgba(6, 11, 16, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 2px 6px;
+}
+
+.mission-camera-overlay,
+.mission-telemetry-panel {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.mission-camera-overlay {
+    top: 1rem;
+    left: 1rem;
+    width: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(5, 9, 13, 0.86);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.44);
+}
+
+.mission-camera-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    padding: 0.5rem 0.65rem;
+    background: rgba(6, 11, 17, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mission-camera-header strong {
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #d8f0ff;
+}
+
+.mission-camera-header span {
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    color: rgba(201, 209, 217, 0.9);
+}
+
+.mission-camera-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #0d1218;
+}
+
+#mission-camera-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mission-telemetry-panel {
+    top: 1rem;
+    right: 1rem;
+    width: 286px;
+    border-radius: 12px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(6, 10, 15, 0.86);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+.mission-telemetry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.mission-telemetry-header h4 {
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+}
+
+.mission-telemetry-header p {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #bfe6ff;
+}
+
+.mission-operator-focus {
+    border-radius: 8px;
+    border: 1px solid rgba(255, 186, 83, 0.5);
+    background: rgba(255, 186, 83, 0.12);
+    color: #ffe5b6;
+    font-size: 0.74rem;
+    line-height: 1.4;
+    padding: 0.45rem 0.55rem;
+}
+
+.mission-metric {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.mission-metric span {
+    color: rgba(201, 209, 217, 0.88);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mission-metric strong {
+    color: #f3fbff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mission-battery-bar {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mission-battery-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #da3b37 0%, #eaad40 50%, #2fd66f 100%);
+}
+
+.mission-battery-needle {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 3px;
+    left: 96%;
+    border-radius: 2px;
+    background: #f5fbff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.mission-rtb-ok {
+    color: #64f09d;
+}
+
+.mission-asset-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    background: rgba(6, 10, 16, 0.82);
+    color: #f1f7ff;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    padding: 1rem;
+}
+
+.mission-asset-fallback code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+}
+
+.mission-feed-fallback {
+    font-size: 0.72rem;
+}
+
+.mission-commercial-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.85rem;
+    padding: 1.5rem;
+    background:
+        radial-gradient(circle at center, rgba(0, 170, 255, 0.12), transparent 60%),
+        linear-gradient(180deg, rgba(6, 10, 15, 0.95), rgba(3, 7, 11, 0.96));
+}
+
+.mission-commercial-view h3 {
+    font-size: 2rem;
+    letter-spacing: 0.08em;
+}
+
+.mission-commercial-view p {
+    max-width: 560px;
+    line-height: 1.6;
+}
+
+.mission-return-button {
+    border: 1px solid rgba(0, 170, 255, 0.8);
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    background-color: rgba(0, 170, 255, 0.18);
+    color: #d3edff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mission-return-button:hover {
+    background-color: rgba(0, 170, 255, 0.28);
+}
+
+.mission-stage-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.mission-stage-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mission-stage-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 170, 255, 0.65);
+    border-radius: 999px;
+}
+
+@media (max-width: 1200px) {
+    .mission-shell {
+        min-height: 100vh;
+    }
+
+    .mission-camera-overlay {
+        width: 220px;
+    }
+
+    .mission-telemetry-panel {
+        width: 250px;
+    }
+}
+
+@media (max-width: 900px) {
+    .mission-roadmap-container {
+        padding: 0;
+    }
+
+    .mission-section-title {
+        text-align: center;
+        margin-bottom: 0.9rem;
+    }
+
+    .mission-scroll-shell {
+        height: 240vh;
+    }
+
+    .mission-shell {
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+    }
+
+    .mission-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+    }
+
+    .mission-mode-toggle {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .mission-mode-button {
+        flex: 0 0 auto;
+    }
+
+    .mission-stage-scroll {
+        padding: 0.55rem;
+    }
+
+    .mission-camera-overlay {
+        top: 0.55rem;
+        left: 0.55rem;
+        width: 185px;
+    }
+
+    .mission-telemetry-panel {
+        top: 0.55rem;
+        right: 0.55rem;
+        width: 210px;
+        padding: 0.55rem;
+        gap: 0.45rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .mission-scroll-shell {
+        height: 250vh;
+    }
+
+    .mission-shell {
+        height: 100vh;
+        min-height: 100vh;
+    }
+
+    .mission-toolbar {
+        padding: 0.65rem 0.7rem;
+    }
+
+    .mission-subtitle {
+        font-size: 1.15rem;
+    }
+
+    .mission-status {
+        font-size: 0.72rem;
+    }
+
+    .mission-mode-button {
+        font-size: 0.73rem;
+        padding: 0.4rem 0.65rem;
+    }
+
+    .mission-camera-overlay {
+        width: 160px;
+    }
+
+    .mission-camera-header strong {
+        font-size: 0.66rem;
+    }
+
+    .mission-camera-header span {
+        font-size: 0.58rem;
+    }
+
+    .mission-telemetry-panel {
+        width: 170px;
+        gap: 0.3rem;
+    }
+
+    .mission-telemetry-header h4 {
+        font-size: 0.9rem;
+    }
+
+    .mission-telemetry-header p,
+    .mission-metric,
+    .mission-operator-focus {
+        font-size: 0.64rem;
+    }
+}
 .team-bg { background-color: var(--background-color); }
 .contact-bg {
     background: url('assets/JoinOurMission.png') center/cover fixed
