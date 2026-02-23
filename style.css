@@ -5,6 +5,19 @@
     --text-color: #c9d1d9;
     --headline-color: #ffffff;
     --container-width: 1600px; /* Increased from 1200px for better 1440p layout */
+    --app-vh: 100vh;
+}
+
+@supports (height: 100dvh) {
+    :root {
+        --app-vh: 100dvh;
+    }
+}
+
+@supports (height: 100svh) and (not (height: 100dvh)) {
+    :root {
+        --app-vh: 100svh;
+    }
 }
 
 /* --- NEW: Loading Screen Styles --- */
@@ -91,7 +104,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 /*  SCROLL SEQUENCE STYLES        */
 /* ================================== */
 #scroll-sequence-container { height: 3000px; position: relative; z-index: 1; }
-#scroll-video { position: sticky; top: 0; width: 100%; height: 100vh; object-fit: cover; display: block; }
+#scroll-video { position: sticky; top: 0; width: 100%; height: var(--app-vh); object-fit: cover; display: block; }
 
 /* --- REBUILT WELCOME BANNER --- */
 #welcome-banner {
@@ -124,10 +137,21 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 #rest-of-site { position: relative; z-index: 10; background-color: var(--background-color); }
 
 /* --- Section Styles --- */
-.section-wrapper { position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-size: cover; background-position: center center; background-attachment: fixed; }
+.section-wrapper { position: relative; display: flex; justify-content: center; align-items: center; min-height: var(--app-vh); background-size: cover; background-position: center center; background-attachment: fixed; }
 .section-wrapper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(13, 17, 23, 0.85); z-index: 1; transition: opacity 0.5s ease; }
 .section-container { max-width: var(--container-width); margin: 0 auto; padding: 6rem 2rem; text-align: center; position: relative; z-index: 2; }
 .section-title { font-size: 3rem; margin-bottom: 3rem; letter-spacing: 2px; }
+
+@supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+    .navbar,
+    .feature-card,
+    .timeline-content,
+    .email-display,
+    .mission-camera-overlay,
+    .mission-telemetry-panel {
+        backdrop-filter: none;
+    }
+}
 
 /*
 * UPDATED: Reverted to simple background colors to fix 404 errors.
@@ -177,13 +201,13 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .mission-sticky-panel {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: var(--app-vh);
     padding-bottom: 0;
 }
 
 .mission-shell {
-    height: 100vh;
-    min-height: 100vh;
+    height: var(--app-vh);
+    min-height: var(--app-vh);
     display: flex;
     flex-direction: column;
     border-radius: 0;
@@ -264,26 +288,29 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     background-color: #0a0d10;
 }
 
-.mission-stage-scroll {
+.mission-stage-viewport {
     position: absolute;
     inset: 0;
-    overflow: auto;
+    overflow: hidden;
     padding: 1rem;
     touch-action: pan-x pan-y;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(168, 180, 191, 0.55) rgba(255, 255, 255, 0.08);
+    user-select: none;
 }
 
 .mission-stage {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 1600px;
     height: 900px;
-    margin: 0 auto;
+    margin: 0;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(183, 195, 205, 0.28);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
     background-color: #12171c;
+    transform-origin: top left;
+    will-change: transform;
 }
 
 #mission-map-image {
@@ -568,6 +595,35 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
 }
 
+.mission-shell.is-compact .mission-camera-overlay {
+    width: 168px;
+    top: 0.5rem;
+    left: 0.5rem;
+}
+
+.mission-shell.is-compact .mission-telemetry-panel {
+    top: auto;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    width: 178px;
+    gap: 0.28rem;
+    padding: 0.45rem;
+}
+
+.mission-shell.is-compact .mission-operator-focus,
+.mission-shell.is-compact .mission-metric-secondary {
+    display: none;
+}
+
+.mission-shell.is-compact .mission-telemetry-header h4 {
+    font-size: 0.86rem;
+}
+
+.mission-shell.is-compact .mission-telemetry-header p,
+.mission-shell.is-compact .mission-metric {
+    font-size: 0.62rem;
+}
+
 .mission-telemetry-header {
     display: flex;
     justify-content: space-between;
@@ -712,23 +768,23 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     background-color: rgba(157, 175, 188, 0.32);
 }
 
-.mission-stage-scroll::-webkit-scrollbar {
+.mission-stage-viewport::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
 
-.mission-stage-scroll::-webkit-scrollbar-track {
+.mission-stage-viewport::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.mission-stage-scroll::-webkit-scrollbar-thumb {
+.mission-stage-viewport::-webkit-scrollbar-thumb {
     background: rgba(164, 178, 189, 0.62);
     border-radius: 999px;
 }
 
 @media (max-width: 1200px) {
     .mission-shell {
-        min-height: 100vh;
+        min-height: var(--app-vh);
     }
 
     .mission-camera-overlay {
@@ -755,8 +811,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 
     .mission-shell {
-        height: 100vh;
-        min-height: 100vh;
+        height: var(--app-vh);
+        min-height: var(--app-vh);
         border-radius: 0;
     }
 
@@ -775,7 +831,7 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
         flex: 0 0 auto;
     }
 
-    .mission-stage-scroll {
+    .mission-stage-viewport {
         padding: 0.55rem;
     }
 
@@ -814,8 +870,8 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     }
 
     .mission-shell {
-        height: 100vh;
-        min-height: 100vh;
+        height: var(--app-vh);
+        min-height: var(--app-vh);
     }
 
     .mission-toolbar {
@@ -881,6 +937,16 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
 .contact-bg {
     background: url('assets/JoinOurMission.png') center/cover fixed
                 var(--background-color);
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+    .section-wrapper {
+        background-attachment: scroll;
+    }
+
+    .contact-bg {
+        background-attachment: scroll;
+    }
 }
 
 /* --- All other styles remain the same --- */

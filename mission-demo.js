@@ -5,12 +5,25 @@
     const TAU = Math.PI * 2;
 
     const MISSION_DEFENCE_CONFIG = {
+        layout: {
+            baseWidth: 1600,
+            baseHeight: 900,
+            minScalePhone: 0.2,
+            maxScaleDesktop: 1.15
+        },
+        breakpoints: {
+            mobile: 768,
+            tablet: 1024
+        },
+        ui: {
+            compactThreshold: 768
+        },
         map: {
             width: 1600,
             height: 900
         },
         assets: {
-            desertMap: 'assets/desert-map-1.jpg',
+            desertMap: 'desert-map-1.jpg',
             droneFeed: 'assets/drone-image-1.jpg'
         },
         operators: [
@@ -48,10 +61,9 @@
         backToDefenceButton: document.getElementById('mission-back-defence'),
         defenceView: document.getElementById('mission-defence-view'),
         commercialView: document.getElementById('mission-commercial-view'),
-        stageScroll: document.getElementById('mission-stage-scroll'),
+        stageViewport: document.getElementById('mission-stage-viewport'),
         stage: document.getElementById('mission-stage'),
         mapImage: document.getElementById('mission-map-image'),
-        mapFallback: document.getElementById('mission-map-fallback'),
         overlaySvg: document.getElementById('mission-overlay-svg'),
         wedgesGroup: document.getElementById('mission-camera-wedges'),
         polygon: document.getElementById('mission-polygon'),
@@ -62,7 +74,6 @@
         cameraTitle: document.getElementById('mission-camera-title'),
         cameraSubtitle: document.getElementById('mission-camera-subtitle'),
         cameraImage: document.getElementById('mission-camera-image'),
-        cameraFallback: document.getElementById('mission-camera-fallback'),
         telemetryEntity: document.getElementById('telemetry-entity'),
         telemetryAltitude: document.getElementById('telemetry-altitude'),
         telemetryBattery: document.getElementById('telemetry-battery-text'),
@@ -73,14 +84,12 @@
         operatorFocus: document.getElementById('mission-operator-focus')
     };
 
-    if (!refs.shell || !refs.stage || !refs.overlaySvg) {
+    if (!refs.shell || !refs.stage || !refs.stageViewport || !refs.overlaySvg) {
         return;
     }
 
     const state = {
         mode: 'defence',
-        mapMissing: false,
-        feedMissing: false,
         polygon: MISSION_DEFENCE_CONFIG.polygon.map((point) => ({ x: point.x, y: point.y })),
         operators: MISSION_DEFENCE_CONFIG.operators.map((operator) => ({ ...operator, element: null })),
         drones: [],
@@ -90,12 +99,22 @@
         coverageIntervalId: null,
         rafId: null,
         lastFrameTime: performance.now(),
-        centeredStage: false
+        layoutRafId: null,
+        layout: {
+            scale: 1,
+            offsetX: 0,
+            offsetY: 0,
+            viewportWidth: 0,
+            viewportHeight: 0
+        }
     };
 
     init();
 
     function init() {
+        refs.stage.style.width = `${MISSION_DEFENCE_CONFIG.layout.baseWidth}px`;
+        refs.stage.style.height = `${MISSION_DEFENCE_CONFIG.layout.baseHeight}px`;
+
         bindModeControls();
         bindAssetFallbacks();
         buildPolygonHandles();
@@ -117,8 +136,11 @@
 
         state.rafId = window.requestAnimationFrame(stepSimulation);
 
+        updateViewportHeightVariable();
+        scheduleSceneLayout();
         window.addEventListener('resize', handleWindowResize);
-        window.setTimeout(centerStageViewport, 60);
+        window.addEventListener('orientationchange', handleWindowResize);
+        window.addEventListener('load', scheduleSceneLayout, { once: true });
     }
 
     function bindModeControls() {
@@ -135,25 +157,19 @@
         refs.cameraImage.src = MISSION_DEFENCE_CONFIG.assets.droneFeed;
 
         refs.mapImage.addEventListener('error', () => {
-            state.mapMissing = true;
-            refs.mapFallback.hidden = false;
+            refs.mapImage.style.opacity = '0.25';
         });
 
         refs.mapImage.addEventListener('load', () => {
-            state.mapMissing = false;
-            refs.mapFallback.hidden = true;
+            refs.mapImage.style.opacity = '1';
         });
 
         refs.cameraImage.addEventListener('error', () => {
-            state.feedMissing = true;
-            refs.cameraFallback.hidden = false;
-            refs.cameraImage.style.display = 'none';
+            refs.cameraImage.style.opacity = '0';
         });
 
         refs.cameraImage.addEventListener('load', () => {
-            state.feedMissing = false;
-            refs.cameraFallback.hidden = true;
-            refs.cameraImage.style.display = 'block';
+            refs.cameraImage.style.opacity = '1';
         });
     }
 
@@ -162,7 +178,7 @@
         state.polygon.forEach((point, index) => {
             const handle = document.createElementNS(SVG_NS, 'circle');
             handle.setAttribute('class', 'polygon-handle');
-            handle.setAttribute('r', '8');
+            handle.setAttribute('r', '12');
             handle.dataset.index = String(index);
             handle.setAttribute('cx', String(point.x));
             handle.setAttribute('cy', String(point.y));
@@ -639,13 +655,7 @@
                 : 'No drone available';
         }
 
-        if (state.feedMissing) {
-            refs.cameraFallback.hidden = false;
-            refs.cameraImage.style.display = 'none';
-        } else {
-            refs.cameraFallback.hidden = true;
-            refs.cameraImage.style.display = 'block';
-        }
+        refs.cameraImage.style.display = 'block';
     }
 
     function updateTelemetry() {
@@ -712,27 +722,64 @@
         refs.commercialView.hidden = isDefence;
 
         if (isDefence) {
-            window.setTimeout(centerStageViewport, 40);
+            scheduleSceneLayout();
         }
     }
 
     function handleWindowResize() {
-        if (state.mode === 'defence') {
-            centerStageViewport();
-        }
+        updateViewportHeightVariable();
+        scheduleSceneLayout();
     }
 
-    function centerStageViewport() {
-        if (!refs.stageScroll) {
+    function updateViewportHeightVariable() {
+        document.documentElement.style.setProperty('--app-vh', `${window.innerHeight}px`);
+    }
+
+    function scheduleSceneLayout() {
+        if (state.layoutRafId !== null) {
             return;
         }
 
-        const x = Math.max(0, (MISSION_DEFENCE_CONFIG.map.width - refs.stageScroll.clientWidth) / 2);
-        const y = Math.max(0, (MISSION_DEFENCE_CONFIG.map.height - refs.stageScroll.clientHeight) / 2);
+        state.layoutRafId = window.requestAnimationFrame(() => {
+            state.layoutRafId = null;
+            applySceneLayout();
+        });
+    }
 
-        refs.stageScroll.scrollLeft = x;
-        refs.stageScroll.scrollTop = y;
-        state.centeredStage = true;
+    function applySceneLayout() {
+        if (!refs.stageViewport || !refs.stage) {
+            return;
+        }
+
+        const baseWidth = MISSION_DEFENCE_CONFIG.layout.baseWidth;
+        const baseHeight = MISSION_DEFENCE_CONFIG.layout.baseHeight;
+        const viewportRect = refs.stageViewport.getBoundingClientRect();
+
+        const viewportWidth = Math.max(1, viewportRect.width);
+        const viewportHeight = Math.max(1, viewportRect.height);
+
+        const fitScale = Math.min(viewportWidth / baseWidth, viewportHeight / baseHeight);
+        const scale = clamp(
+            fitScale,
+            MISSION_DEFENCE_CONFIG.layout.minScalePhone,
+            MISSION_DEFENCE_CONFIG.layout.maxScaleDesktop
+        );
+
+        const scaledWidth = baseWidth * scale;
+        const scaledHeight = baseHeight * scale;
+        const offsetX = (viewportWidth - scaledWidth) * 0.5;
+        const offsetY = (viewportHeight - scaledHeight) * 0.5;
+
+        state.layout.scale = scale;
+        state.layout.offsetX = offsetX;
+        state.layout.offsetY = offsetY;
+        state.layout.viewportWidth = viewportWidth;
+        state.layout.viewportHeight = viewportHeight;
+
+        refs.stage.style.transform = `translate(${offsetX.toFixed(2)}px, ${offsetY.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+
+        const compactMode = viewportWidth <= MISSION_DEFENCE_CONFIG.ui.compactThreshold;
+        refs.shell.classList.toggle('is-compact', compactMode);
     }
 
     function describeWedge(centerX, centerY, radius, heading, fovRadians) {
@@ -759,9 +806,11 @@
 
     function clientPointToStage(clientX, clientY) {
         const rect = refs.stage.getBoundingClientRect();
+        const scaleX = rect.width / MISSION_DEFENCE_CONFIG.layout.baseWidth || 1;
+        const scaleY = rect.height / MISSION_DEFENCE_CONFIG.layout.baseHeight || 1;
         return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
+            x: (clientX - rect.left) / scaleX,
+            y: (clientY - rect.top) / scaleY
         };
     }
 

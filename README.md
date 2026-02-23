@@ -24,6 +24,23 @@ The roadmap section has been replaced by a mission-style operator UI with:
 - Click drone: camera overlay and telemetry focus that drone.
 - Click operator: highlights operator and shows nearest drone feed context.
 - Battery/RTB/range/endurance telemetry panel for selected context.
+- Logical mission scene rendered at `1600x900` and scaled responsively for viewport fit.
+- Adaptive compact HUD mode on smaller screens.
+
+## Browser and Device Support
+
+Current target baseline:
+
+- Chrome (desktop/mobile): latest 2 versions
+- Safari (macOS + iOS): latest 2 versions
+- Edge: latest 2 versions
+- Firefox: latest 2 versions
+
+Compatibility behaviors included:
+
+- Dynamic viewport height handling (`dvh/svh` + JS fallback) for mobile browser chrome.
+- `backdrop-filter` fallback styling when blur support is unavailable.
+- Mobile fallback for `background-attachment: fixed`.
 
 ## Required Mission Assets
 
@@ -56,7 +73,8 @@ Then open:
 
 - Commercial mode is intentionally a placeholder.
 - Drone movement and telemetry are currently dummy/simulated values.
-- Mission coordinates are fixed for a `1600x900` map stage with internal scrolling on small screens.
+- Mission simulation coordinates are fixed to a logical `1600x900` scene.
+- Extremely narrow portrait screens may require visual zooming by the user for very fine polygon handle edits.
 
 ## Next Recommended Improvements
 
