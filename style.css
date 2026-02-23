@@ -193,6 +193,29 @@ h1,h2,h3,h4 { font-family: 'Teko', sans-serif; color: var(--headline-color); fon
     text-align: left;
 }
 
+.roadmap-placeholder {
+    min-height: min(72vh, 760px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 4rem 2rem;
+    text-align: left;
+}
+
+.roadmap-placeholder h3 {
+    font-size: clamp(2rem, 3.8vw, 3.2rem);
+    letter-spacing: 0.08em;
+}
+
+.roadmap-placeholder p {
+    max-width: 60ch;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(201, 209, 217, 0.86);
+}
+
 .mission-scroll-shell {
     position: relative;
     height: 230vh;
